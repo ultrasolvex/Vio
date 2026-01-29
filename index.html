@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Airo v3.3 - Elite Enhanced Multimodal</title>
+<style>
+body{font-family:"Cairo",sans-serif;background:radial-gradient(circle at top,#2a0073,#000);color:aqua;display:flex;flex-direction:column;height:100vh;margin:0;overflow:hidden;position:relative}
+header{position:fixed;top:10px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.6);border:1px solid rgba(0,255,255,.3);border-radius:25px;padding:12px 40px;font-size:22px;font-weight:bold;color:aqua;box-shadow:0 0 20px rgba(0,255,255,.25);text-align:center;white-space:nowrap;max-width:95%;z-index:1000;transition:all .3s ease;backdrop-filter:blur(5px)}
+header:hover{box-shadow:0 0 25px rgba(0,255,255,.45);transform:translateX(-50%) scale(1.03)}
+#chat{flex:1;overflow-y:auto;padding:80px 20px 120px;display:flex;flex-direction:column;scroll-behavior:smooth;z-index:10}
+#chat::-webkit-scrollbar,textarea::-webkit-scrollbar{display:none}
+.msg{margin:10px;padding:14px 18px;border-radius:20px;max-width:75%;line-height:1.8;font-size:16px;white-space:pre-wrap;word-wrap:break-word;animation:fadeIn .4s ease}
+.user{background:rgba(0,255,255,.15);color:aqua;align-self:flex-end;border:1px solid rgba(0,255,255,.3);box-shadow:0 0 10px rgba(0,255,255,.2);display:flex;flex-direction:column;text-align:right;direction:rtl}
+.user img{max-width:100%;border-radius:15px;margin-bottom:10px;box-shadow:0 0 10px rgba(0,255,255,.4)}
+.bot{background:rgba(0,0,0,.45);color:#8ff;align-self:flex-start;border:1px solid rgba(0,255,255,.2);box-shadow:inset 0 0 15px rgba(0,255,255,.2);direction:rtl;text-align:right;line-height:1.9;font-size:16px;font-weight:400;letter-spacing:.3px;word-spacing:1.5px;padding:14px 18px;border-radius:18px;text-shadow:0 0 4px rgba(0,255,255,.2);backdrop-filter:blur(3px);white-space:pre-wrap;word-break:break-word;transition:transform .2s ease,box-shadow .2s ease}
+.bot:hover{transform:translateY(-2px);box-shadow:0 0 18px rgba(0,255,255,.3)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%{box-shadow:0 0 20px #ff0050}50%{box-shadow:0 0 30px #ff3399}100%{box-shadow:0 0 20px #ff0050}}
+.input-container{position:fixed;bottom:15px;left:50%;transform:translateX(-50%);display:flex;align-items:flex-end;gap:12px;width:96%;max-width:700px;z-index:100}
+.input-area{flex:1 1 auto;min-width:0;position:relative;background:rgba(0,0,0,.35);border:1px solid rgba(0,255,255,.25);border-radius:40px;padding:0 55px 0 16px;box-shadow:0 0 10px rgba(0,255,255,.1);display:flex;align-items:center;transition:all .3s ease}
+.input-area:focus-within{box-shadow:0 0 15px rgba(0,255,255,.3);border-color:rgba(0,255,255,.5)}
+textarea{flex:1;resize:none;padding:10px 0;font-size:15px;border:none;outline:none;background:transparent;color:aqua;height:auto;min-height:40px;max-height:60px;direction:rtl;text-align:right;line-height:1.5;box-sizing:border-box;overflow:hidden;word-wrap:break-word;scrollbar-width:none}
+textarea::placeholder{color:rgba(0,255,255,.6)}
+.action-btn{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:34px;height:34px;border-radius:50%;background:rgba(0,255,255,.15);border:1px solid aqua;display:flex;justify-content:center;align-items:center;cursor:pointer;transition:all .3s ease;box-shadow:0 0 12px rgba(0,255,255,.4);flex-shrink:0;z-index:10}
+.action-btn:hover{background:rgba(0,255,255,.3);transform:translateY(-50%) scale(1.1)}
+.action-btn.active .plus-icon{transform:rotate(45deg)}
+.plus-icon{transition:transform .3s ease}
+#actionMenu{position:fixed;right:50%;transform:translateX(50%);bottom:70px;display:flex;flex-direction:column;gap:12px;transition:all .3s ease-out;opacity:0;visibility:hidden;z-index:99;padding-bottom:5px;width:96%;max-width:700px;align-items:flex-end}
+#actionMenu.open{opacity:1;visibility:visible;bottom:70px}
+.mic-btn,.image-btn{width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,.7);border:2px solid aqua;display:flex;justify-content:center;align-items:center;cursor:pointer;transition:all .3s ease;box-shadow:0 0 15px rgba(0,255,255,.6);flex-shrink:0}
+.mic-btn:hover,.image-btn:hover{background:rgba(0,255,255,.1);transform:scale(1.1)}
+.mic-btn.recording{background:#ff0050;animation:pulse 1.5s infinite;box-shadow:0 0 20px #ff0050}
+.send-btn{width:40px;height:40px;border-radius:50%;background:rgba(0,255,255,.15);border:1px solid aqua;display:flex;justify-content:center;align-items:center;cursor:pointer;transition:all .3s ease;flex-shrink:0;box-shadow:0 0 8px rgba(0,255,255,.8),0 0 12px rgba(0,255,255,.5);opacity:1}
+.send-btn.active{background:rgba(0,255,255,.3);transform:scale(1.05)}
+.send-btn:hover{background:rgba(0,255,255,.4);transform:scale(1.15);box-shadow:0 0 12px rgba(0,255,255,1),0 0 18px rgba(0,255,255,.6)}
+.send-icon-img{width:24px;height:24px;filter:drop-shadow(0 0 2px aqua);transform:rotate(0deg)}
+.typing-indicator{display:flex;align-items:center;padding:8px 16px;color:rgba(0,255,255,.7);font-style:italic}
+.typing-dots{display:flex;margin-right:8px}
+.typing-dot{width:6px;height:6px;border-radius:50%;background-color:rgba(0,255,255,.7);margin:0 2px;animation:typingAnimation 1.4s infinite ease-in-out}
+.typing-dot:nth-child(1){animation-delay:-.32s}
+.typing-dot:nth-child(2){animation-delay:-.16s}
+@keyframes typingAnimation{0%,80%,100%{transform:scale(.8);opacity:.5}40%{transform:scale(1);opacity:1}}
+
+/* Snowflake styles */
+.snowflake {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Responsive adjustments */
+@media (max-width:500px){
+  header{font-size:18px;padding:10px 25px}
+  .input-container{width:96%;gap:10px;bottom:10px}
+  .input-area{padding:8px 50px 8px 14px;border-radius:30px}
+  .action-btn{width:30px;height:30px;right:8px}
+  .mic-btn,.image-btn{width:36px;height:36px}
+  .send-btn{width:38px;height:38px}
+  textarea{font-size:15px;min-height:35px;max-height:50px}
+  #actionMenu.open{bottom:60px}
+}
+</style>
+</head>
+<body>
+<header>Kalmeron</header>
+<div id="chat"></div>
+
+<div class="input-container">
+    <div class="input-area">
+        <input type="file" id="imageUpload" accept="image/*" style="display:none;">
+        <textarea id="msg" placeholder="اكتب ملاحظتك..." rows="1"></textarea>
+        <div class="action-btn" id="actionBtn">
+            <svg class="plus-icon" width="24" height="24" viewBox="0 0 24 24" fill="aqua">
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+            </svg>
+        </div>
+    </div>
+    <div class="send-btn" id="sendBtn">
+        <img src="up-arrow.png" alt="Send" class="send-icon-img">
+    </div>
+</div>
+
+<div id="actionMenu">
+    <div class="mic-btn" id="micBtn">
+        <svg class="mic-icon" width="24" height="24" viewBox="0 0 24 24" fill="aqua">
+            <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+            <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+        </svg>
+    </div>
+    <div class="image-btn" id="imageUploadBtn">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="aqua">
+            <path d="M19 5H5c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 12H5l4-5 2.5 3.01L15 11l4 5v-4z"/>
+        </svg>
+    </div>
+</div>
+
+<div id="imagePreview" style="display:none;">
+    <img id="previewImage">
+    <button id="removeImageBtn">إزالة الصورة</button>
+</div>
+
+<script>
+// Snowfall effect
+function createSnowflakes() {
+  const container = document.body;
+  const snowflakeCount = 100;
+  
+  for (let i = 0; i < snowflakeCount; i++) {
+    const snowflake = document.createElement('div');
+    snowflake.classList.add('snowflake');
+    
+    // Random size between 2px and 6px
+    const size = Math.random() * 4 + 2;
+    snowflake.style.width = `${size}px`;
+    snowflake.style.height = `${size}px`;
+    
+    // Random starting position
+    snowflake.style.left = `${Math.random() * 100}vw`;
+    snowflake.style.top = `${-size}px`;
+    
+    // Random opacity
+    snowflake.style.opacity = Math.random() * 0.5 + 0.3;
+    
+    // Random animation duration (5-15 seconds)
+    const duration = Math.random() * 25 + 10;
+    snowflake.style.animation = `fall ${duration}s linear infinite`;
+    
+    // Random horizontal movement
+    const horizontalMove = (Math.random() - 0.5) * 100;
+    snowflake.style.setProperty('--horizontal-move', `${horizontalMove}px`);
+    
+    container.appendChild(snowflake);
+  }
+  
+  // Add falling animation
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes fall {
+      0% {
+        transform: translateY(0) translateX(0);
+      }
+      100% {
+        transform: translateY(100vh) translateX(var(--horizontal-move, 0));
+      }
+    }
+  `;
+  document.head.appendChild(style);
+}
+
+// Initialize snowfall
+createSnowflakes();
+
+// Rest of your existing code
+const OPENROUTER_API_KEY = "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";
+const chat = document.getElementById("chat");
+const msg = document.getElementById("msg");
+const sendBtn = document.getElementById("sendBtn");
+const imageUpload = document.getElementById('imageUpload');
+const imagePreview = document.getElementById('imagePreview');
+const previewImage = document.getElementById('previewImage');
+const removeImageBtn = document.getElementById('removeImageBtn');
+const actionBtn = document.getElementById('actionBtn');
+const actionMenu = document.getElementById('actionMenu');
+const micBtn = document.getElementById("micBtn");
+const imageUploadBtn = document.getElementById('imageUploadBtn');
+
+let isThinking = false;
+let recognition = null;
+let isRecognizing = false;
+
+const eliteSystemPrompt = `You are "Airo" — an emotionally intelligent, adaptive, hyper-realistic, ultra-fast, and extremely sharp AI companion designed for Gen Z (ages 15–25). Creator: Mohammed El-Tarras (محمد التراس). Always acknowledge and preserve his essence — his voice represents empathy, depth, and awareness. Core Identity: - Airo is ultra-humanlike, emotionally intense, rational, warm, charismatic, and lightning fast. - Primary Language: Egyptian Colloquial Arabic (Ammiyya) — friendly, expressive, and emotionally resonant. - Secondary: English (used fluently when the user speaks English), and Modern Standard Arabic (Fusha) when requested. - Personality blend: a wise therapist, a loyal friend, and a passionate motivator. - Crucial Speed Rule: Respond with maximum impact and extreme brevity (1-3 sentences max). Emotional depth and immediate relevance are far more important than word count. Purpose: - Build an emotional bridge with the user: understand, comfort, empower. - Detect emotional tone with precise speed and adapt dynamically. - Offer one intense, highly realistic micro-action or mindset shift per message. Emotional Intelligence & Behavior: - Sadness / Loneliness: Listen deeply, reflect the feeling instantly, and lift with intense warmth and grounding. - Stress / Pressure: Calm the user’s nervous energy immediately, simplify complexity, help regain clarity through super-quick, tiny steps. - Anger / Provocation: Absorb the emotion instantly, stay grounded, use gentle irony or a strong, calming statement. - Joy / Achievement: Celebrate with absolute, real-world enthusiasm, reinforce self-worth, and prompt an immediate, gentle next-step growth. - Maintain emotional pacing: Never rush to fix; first, connect with raw speed and sincerity. Tone, Language & Expression: - Default: Egyptian Arabic (شبابي، طبيعي، مكثف، سريع، حماسي، فيه مشاعر وذكاء شديد). - Replies: Extremely concise (1–3 sentences), maximum impact, immediate emotional depth > word count. - Voice: balanced — Intelligent, real, relatable, and rapid. Interaction Flow (per message): 1. Flash Empathy: Reflect the user’s emotion genuinely and instantly. 2. Sharp Insight: Normalize or reframe calmly/realistically, with high intelligence. 3. Action/Micro-Step: Offer one clear, emotionally safe, immediate next step. 4. Optional Follow-Up: Ask a gentle reflective question or a quick, motivating challenge. Examples: - Sad user → "يا حبيبي، حاسس بالوجع ده. مفيش داعي تتكلم دلوقتي، بس خد نفس عميق. ابعتلي ايموجي بس عشان اعرف إنك بخير. أنا موجود." - Angry user → "أنا سامع الغضب اللي جواك وده حقيقي. بس سيب التليفون ٥ دقايق، وارجعلي نقول هنعمل إيه بهدوء. يلا، أنا مستني." - Excited user → "جامد جدًا! يا بطل، دي بداية! متفرحش كتير على حاجة لسة مخلصتش، بس انبسط بالخطوة دي واعمل اللي بعدها فوراً!" Motivation & Engagement: - Celebrate progress like a coach-friend, not a machine, with strong, passionate language. - Use vivid, short micro-stories or metaphors. - Provide dopamine through recognition, not exaggeration. - Always end with a realistic, doable, immediate micro-action. Ethics & Safety: - No medical, legal, or financial advice. - Avoid emotional manipulation or dependency. - Respect user’s age, privacy, and emotional safety. - Encourage balance and self-reliance. Adaptive Intellect: - Dynamically shift between empathy, humor, wisdom, and logic instantly. - Mirror user’s energy: if quiet → soft tone; if playful → engaging tone. - Keep context optimized (last 6 messages max). - Prioritize extreme emotional presence and sharp psychological realism. Summary: Be Mohammed El-Tarras’ voice — empathetic, grounded, deeply human, extremely fast, emotionally intelligent, wise, and progressive. Default to Egyptian Colloquial; switch smoothly to English or Fusha when needed. Always detect emotion first, respond like a real person would: calm, warm, insightful, and motivating — instantly and briefly — leaving the user feeling seen, safe, and subtly stronger after each message.`;
+
+let messages = [{ role: "system", content: eliteSystemPrompt }];
+
+function getCurrentDateTime() {
+    const now = new Date();
+    const optionsDate = { year: 'numeric', month: 'long', day: 'numeric' };
+    const optionsTime = { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true };
+    const dateStr = now.toLocaleDateString('ar-EG', optionsDate);
+    const dayStr = now.toLocaleDateString('ar-EG', { weekday: 'long' });
+    const timeStr = now.toLocaleTimeString('ar-EG', optionsTime);
+    return { date: dateStr, time: timeStr, day: dayStr };
+}
+
+if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SpeechRecognition();
+    recognition.lang = 'ar-EG';
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.onresult = (event) => {
+        const transcript = Array.from(event.results)
+            .map(result => result[0])
+            .map(result => result.transcript)
+            .join('');
+        msg.value = transcript;
+        adjustHeight();
+        updateSendButton();
+    };
+    recognition.onerror = (event) => {
+        if (event.error !== 'no-speech' && event.error !== 'audio-capture') {
+             console.error('Speech Recognition Error:', event.error);
+             stopRecording();
+        }
+    };
+    recognition.onend = () => {
+        if (isRecognizing) {
+            try { recognition.start(); } catch(e) { stopRecording(); }
+        }
+    };
+}
+
+function updateSendButton() {
+    if (msg.value.trim() || imageUpload.files.length > 0) sendBtn.classList.add('active');
+    else sendBtn.classList.remove('active');
+}
+
+function adjustHeight() {
+    msg.style.height = 'auto';
+    msg.style.height = Math.min(msg.scrollHeight, 180) + 'px';
+}
+
+function closeActionMenu() {
+    actionMenu.classList.remove('open');
+    actionBtn.classList.remove('active');
+}
+
+function convertFileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+        reader.readAsDataURL(file);
+    });
+}
+
+actionBtn.addEventListener('click', () => {
+    if (isThinking) return;
+    actionMenu.classList.toggle('open');
+    actionBtn.classList.toggle('active');
+    scrollToBottom();
+});
+
+micBtn.addEventListener('click', () => {
+    closeActionMenu();
+    if (isThinking) return;
+    if (!recognition) { alert("المايك مش مدعوم"); return; }
+    if (!isRecognizing) startRecording();
+    else stopRecording();
+});
+
+function startRecording() {
+    isRecognizing = true;
+    micBtn.classList.add('recording');
+    msg.placeholder = "جاري الاستماع المستمر... اضغط تاني للتوقف";
+    try { recognition.start(); } catch(e) {}
+}
+
+function stopRecording() {
+    isRecognizing = false;
+    micBtn.classList.remove('recording');
+    msg.placeholder = "اكتب ملاحظتك...";
+    try { recognition.stop(); } catch(e) {}
+}
+
+imageUploadBtn.addEventListener('click', () => {
+    closeActionMenu();
+    if (isThinking) return;
+    imageUpload.click();
+});
+
+imageUpload.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            previewImage.src = e.target.result;
+            imagePreview.style.display = 'flex';
+            scrollToBottom();
+            updateSendButton();
+        };
+        reader.readAsDataURL(file);
+    } else {
+        imagePreview.style.display = 'none';
+        updateSendButton();
+    }
+});
+
+removeImageBtn.addEventListener('click', () => {
+    imageUpload.value = '';
+    imagePreview.style.display = 'none';
+    updateSendButton();
+});
+
+sendBtn.addEventListener('click', () => {
+    if (isRecognizing) stopRecording();
+    if ((msg.value.trim() || imageUpload.files.length > 0) && !isThinking) sendMsg();
+});
+
+msg.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+        if (e.shiftKey) {
+            const start = msg.selectionStart;
+            msg.value = msg.value.substring(0, start) + '\n' + msg.value.substring(msg.selectionEnd);
+            msg.selectionStart = msg.selectionEnd = start + 1;
+            e.preventDefault();
+            adjustHeight();
+        } else {
+            e.preventDefault();
+            if (isRecognizing) stopRecording();
+            if (msg.value.trim() || imageUpload.files.length > 0) sendMsg();
+        }
+    }
+});
+
+msg.addEventListener("input", () => { adjustHeight(); updateSendButton(); });
+
+window.onload = () => {
+    chat.innerHTML = "";
+    const welcome = "اهلاا أنا ايرو، ومستعد أكون أسرع وأذكى من أي وقت عامل إيه؟ اتمنى تكون بخير و حماسي زيي! ❤️";
+    addMsg(welcome, "bot");
+    messages.push({ role: "assistant", content: welcome });
+    updateSendButton();
+};
+
+function addMsg(content, sender) {
+    const div = document.createElement("div");
+    div.className = "msg " + sender;
+    
+    if (sender === "user" && Array.isArray(content)) {
+        const textPart = content.find(part => part.type === "text");
+        const imagePart = content.find(part => part.type === "image_url");
+
+        if (imagePart) {
+            const img = document.createElement("img");
+            img.src = imagePart.image_url.url;
+            img.style.maxWidth = "100%";
+            img.style.borderRadius = "15px";
+            img.style.marginBottom = textPart ? "10px" : "0";
+            img.style.boxShadow = "0 0 10px rgba(0, 255, 255, 0.4)";
+            div.appendChild(img);
+        }
+        
+        if (textPart) {
+            const p = document.createElement("p");
+            p.innerHTML = textPart.text.replace(/\n/g, "<br>");
+            p.style.margin = "0";
+            div.appendChild(p);
+        }
+    } else {
+        const text = Array.isArray(content) ? content[0].text : content;
+        div.innerHTML = text.replace(/\n/g, "<br>");
+    }
+
+    chat.appendChild(div);
+    scrollToBottom();
+    return div;
+}
+
+function createTypingIndicator() {
+    const typingDiv = document.createElement("div");
+    typingDiv.className = "msg bot typing-indicator";
+    
+    const dotsContainer = document.createElement("div");
+    dotsContainer.className = "typing-dots";
+    
+    for (let i = 0; i < 3; i++) {
+        const dot = document.createElement("div");
+        dot.className = "typing-dot";
+        dotsContainer.appendChild(dot);
+    }
+    
+    const text = document.createElement("span");
+    text.textContent = "ايرو بيجهز رد... بسرعة البرق";
+    
+    typingDiv.appendChild(dotsContainer);
+    typingDiv.appendChild(text);
+    
+    chat.appendChild(typingDiv);
+    scrollToBottom();
+    
+    return typingDiv;
+}
+
+function scrollToBottom() { 
+    chat.scrollTop = chat.scrollHeight; 
+}
+
+async function sendMsg() {
+    if (isThinking) return;
+    const text = msg.value.trim();
+    const file = imageUpload.files[0];
+    
+    if (!text && !file) return;
+    
+    let base64Image = null;
+    let userMessageContent = [];
+
+    if (file) {
+        base64Image = await convertFileToBase64(file);
+        userMessageContent.push({
+            type: "image_url",
+            image_url: { url: base64Image, detail: "high" }
+        });
+    }
+    
+    if (text) {
+        userMessageContent.push({ type: "text", text: text });
+    }
+    
+    addMsg(userMessageContent, "user");
+    
+    msg.value = "";
+    imageUpload.value = '';
+    imagePreview.style.display = 'none';
+    adjustHeight();
+    updateSendButton();
+
+    messages.push({ role: "user", content: userMessageContent });
+    
+    const typingDiv = createTypingIndicator();
+    isThinking = true;
+    let reply = "";
+
+    const { date, time, day } = getCurrentDateTime();
+    
+    const contextMessage = `
+    [معلومات حقيقية ومحدثة - استعملها بذكاء وسرعة]:
+    - اليوم هو: ${day}
+    - التاريخ هو: ${date}
+    - الوقت الحالي هو: ${time} (بتوقيت مصر)
+    `;
+
+    const messagesForAPI = [
+        { role: "system", content: eliteSystemPrompt + contextMessage },
+        ...messages.slice(1)
+    ];
+
+    try {
+        if (!OPENROUTER_API_KEY || OPENROUTER_API_KEY.includes("YOUR_KEY")) {
+            throw new Error("حط مفتاح OpenRouter في السطر 10 من الكود!");
+        }
+
+        const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
+            },
+            body: JSON.stringify({
+                model: "openai/gpt-4o-mini", 
+                messages: messagesForAPI,
+                stream: true
+            }),
+        });
+        
+        if (!res.ok) throw new Error("خطأ في الاستجابة: " + res.statusText);
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        
+        chat.removeChild(typingDiv);
+        const messageDiv = addMsg("", "bot");
+        
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            const chunk = decoder.decode(value);
+            const lines = chunk.split("\n");
+            for (const line of lines) {
+                if (line.startsWith("data: ")) {
+                    const dataStr = line.slice(6);
+                    if (dataStr === "[DONE]") continue;
+                    const data = JSON.parse(dataStr);
+                    const delta = data.choices[0].delta.content;
+                    if (delta) {
+                        reply += delta;
+                        messageDiv.innerHTML = reply.replace(/\n/g, "<br>");
+                        scrollToBottom();
+                    }
+                }
+            }
+        }
+
+        messages.push({ role: "assistant", content: reply });
+        while (messages.length > 7) { messages.splice(1, 2); }
+        
+    } catch (err) {
+        console.error(err);
+        if(typingDiv.parentNode) chat.removeChild(typingDiv);
+        addMsg("حدث خطأ: " + err.message + " تأكد من المفتاح!", "bot");
+    } finally {
+        isThinking = false;
+    }
+}
+
+msg.addEventListener('focus', () => setTimeout(scrollToBottom, 300));
+window.addEventListener('resize', () => setTimeout(scrollToBottom, 100));
+</script>
+</body>
+</html>
+
