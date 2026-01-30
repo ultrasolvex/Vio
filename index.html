@@ -280,6 +280,26 @@ textarea::placeholder{color:rgba(0,255,255,.6);font-size:15px}
     transform: translateY(-2px);
 }
 
+/* Logout Button */
+.logout-btn {
+    background: rgba(255, 0, 80, 0.2);
+    color: #ff66aa;
+    border: 1px solid rgba(255, 0, 80, 0.7);
+    border-radius: 15px;
+    padding: 8px 15px;
+    margin-top: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    font-family: "Cairo", sans-serif;
+    display: inline-block;
+}
+.logout-btn:hover {
+    background: rgba(255, 0, 80, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 0 10px rgba(255, 0, 80, 0.4);
+}
+
 @media (max-width:768px){
     .input-container,#actionMenu{width:96%;max-width:96%}
     textarea{font-size:16px;max-height:300px}
@@ -385,7 +405,6 @@ textarea::placeholder{color:rgba(0,255,255,.6);font-size:15px}
             <input type="date" id="initialBirthDate">
         </div>
         <div class="initial-button-group">
-            <button class="initial-btn btn-skip" id="skipInitialBtn">تخطي</button>
             <button class="initial-btn btn-continue" id="continueInitialBtn">استمرار</button>
         </div>
     </div>
@@ -400,7 +419,6 @@ const chat=document.getElementById("chat"),msg=document.getElementById("msg"),se
 const initialSetupCard = document.getElementById("initialSetupCard");
 const initialName = document.getElementById("initialName");
 const initialBirthDate = document.getElementById("initialBirthDate");
-const skipInitialBtn = document.getElementById("skipInitialBtn");
 const continueInitialBtn = document.getElementById("continueInitialBtn");
 
 let isThinking=false;
@@ -409,6 +427,7 @@ let currentChatId = null;
 // User Management
 function checkUser(){const d=localStorage.getItem('kalmeronUserData');return d?JSON.parse(d):null;}
 function saveUser(n,b){localStorage.setItem('kalmeronUserData',JSON.stringify({name:n,birthDate:b,registeredAt:new Date().toISOString()}));}
+function clearUser(){localStorage.removeItem('kalmeronUserData');}
 
 // Create Personal Profile Section
 function createPersonalProfileSection() {
@@ -431,6 +450,20 @@ function createPersonalProfileSection() {
     return profileSection;
 }
 
+// Create Logout Button
+function createLogoutButton() {
+    const logoutBtn = document.createElement('div');
+    logoutBtn.className = 'logout-btn';
+    logoutBtn.textContent = 'تسجيل خروج';
+    logoutBtn.addEventListener('click', () => {
+        if(confirm('هل أنت متأكد من تسجيل الخروج؟')) {
+            clearUser();
+            location.reload();
+        }
+    });
+    return logoutBtn;
+}
+
 // Create New Chat Button
 function createNewChatButton() {
     const newChatButton = document.createElement('div');
@@ -446,7 +479,14 @@ function createNewChatButton() {
 }
 
 // Show Profile Modal
-function showProfile(){const u=checkUser();if(u){editName.value=u.name;editBirthDate.value=u.birthDate;profileModal.style.display='flex';}}
+function showProfile(){
+    const u=checkUser();
+    if(u){
+        editName.value=u.name;
+        editBirthDate.value=u.birthDate;
+        profileModal.style.display='flex';
+    }
+}
 
 // Start New Chat
 function startNewChat() {
@@ -515,6 +555,10 @@ function loadChatHistory() {
     // Add Personal Profile Section at the top
     const personalProfileSection = createPersonalProfileSection();
     chatHistoryList.appendChild(personalProfileSection);
+    
+    // Add Logout Button
+    const logoutBtn = createLogoutButton();
+    chatHistoryList.appendChild(logoutBtn);
     
     // Add New Chat Button
     const newChatButton = createNewChatButton();
@@ -679,8 +723,8 @@ setInterval(() => {
 function handleInitialSetup() {
     const userData = checkUser();
     
-    // If user already exists or is a guest, show main chat
-    if (userData && (userData.name !== 'زائر' || userData.birthDate !== '2000-01-01')) {
+    // If user already exists, show main chat
+    if (userData) {
         initialSetupCard.style.display = 'none';
         loadWelcome(userData);
         return;
@@ -697,14 +741,6 @@ function handleInitialSetup() {
     // Set maximum birth date (today)
     const maxDate = new Date();
     initialBirthDate.max = maxDate.toISOString().split('T')[0];
-    
-    // Skip button handler
-    skipInitialBtn.addEventListener('click', () => {
-        // Save as guest user
-        saveUser('زائر', '2000-01-01');
-        initialSetupCard.style.display = 'none';
-        loadWelcome({name: 'زائر'});
-    });
     
     // Continue button handler
     continueInitialBtn.addEventListener('click', () => {
