@@ -1,34 +1,4 @@
-
-                        <!DOCTYPE html>
-                        <html lang="en">
-                        <head>
-                            <meta charset="UTF-8">
-                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <style>
-                body {
-                  background-color: white; /* Ensure the iframe has a white background */
-                }
-
-                  .thinking-dots {
-    display: inline-block;
-    width: 24px;
-    text-align: left;
-  }
-  .thinking-dots::after {
-    content: '...';
-    animation: pulseDots 1.4s infinite ease-in-out;
-  }
-  @keyframes pulseDots {
-    0%, 100% { opacity: 0.3; }
-    30% { opacity: 1; }
-    60% { opacity: 0.6; }
-  }
-  
-
-              </style>
-                        </head>
-                        <body>
-                            <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar">
 <head>
 <meta charset="UTF-8">
@@ -130,6 +100,33 @@ background-clip: padding-box;
 #chat::-webkit-scrollbar-thumb:hover {
 background: rgba(0, 255, 255, 0.7);
 }
+/* === BANNER الترحيب === */
+#welcomeBanner {
+position: fixed;
+top: 0;
+left: 50%;
+transform: translateX(-50%) translateY(-100%);
+background: rgba(0, 0, 0, 0.7);
+border: 1px solid var(--border-color);
+border-radius: 20px;
+padding: 12px 24px;
+color: var(--text-color);
+font-size: 18px;
+font-weight: bold;
+z-index: 2000;
+opacity: 0;
+transition: all 0.4s ease;
+text-align: center;
+direction: rtl;
+}
+#welcomeBanner.show {
+transform: translateX(-50%) translateY(80px);
+opacity: 1;
+}
+#welcomeBanner.hide {
+transform: translateX(-50%) translateY(-100%);
+opacity: 0;
+}
 .msg {
 margin: 10px;
 padding: 14px 18px;
@@ -151,18 +148,23 @@ margin-left: auto;
 text-align: right;
 direction: rtl;
 }
-.bot {
-background: rgba(0, 0, 0, 0.45);
-color: #8ff;
-align-self: flex-start;
-border: 1px solid rgba(0, 255, 255, 0.2);
+/* === الرد الجديد بدون خلفية — لكنه تحت السؤال ومحاذي لليمين === */
+.bot-response {
+margin: 10px;
+padding: 0;
+background: none !important;
+border: none !important;
+box-shadow: none !important;
+color: var(--text-color);
+font-size: 17px;
+font-weight: 600;
+line-height: 1.6;
 text-align: right;
 direction: rtl;
-}
-.user,
-.bot {
-max-width: 80%;
-min-width: 120px;
+max-width: 75%;
+word-wrap: break-word;
+align-self: flex-end; /* ← مهم: يجعله على يمين الشاشة مثل رسالة المستخدم */
+animation: fadeIn .4s;
 }
 @keyframes fadeIn {
 from {
@@ -174,7 +176,6 @@ opacity: 1;
 transform: translateY(0);
 }
 }
-
 /* === تأثير النقاط المتحركة === */
 .thinking-dots {
 display: inline-block;
@@ -190,7 +191,6 @@ animation: pulseDots 1.4s infinite ease-in-out;
 30% { opacity: 1; }
 60% { opacity: 0.6; }
 }
-
 .input-container {
 position: fixed;
 bottom: 15px;
@@ -958,6 +958,8 @@ textarea{font-size:16px;max-height:270px}
 <span>Kalmeron</span>
 <div id="newChatBtn">+</div>
 </header>
+<!-- BANNER الترحيب -->
+<div id="welcomeBanner"></div>
 <div id="chat"></div>
 <div class="input-container">
 <div class="input-area">
@@ -1214,6 +1216,7 @@ const initialName = document.getElementById("initialName");
 const initialBirthDate = document.getElementById("initialBirthDate");
 const continueInitialBtn = document.getElementById("continueInitialBtn");
 const modeOptions = document.querySelectorAll('.mode-option');
+const welcomeBanner = document.getElementById("welcomeBanner");
 let isThinking=false;
 let currentChatId = null;
 let selectedMode = 'general';
@@ -1279,7 +1282,7 @@ return 'محادثة جديدة';
 function saveCurrentChat() {
 if (!chat.children.length) return null;
 const chatMessages = [];
-const messages = chat.querySelectorAll('.msg');
+const messages = chat.querySelectorAll('.msg, .bot-response');
 messages.forEach(msg => {
 const sender = msg.classList.contains('user') ? 'user' : 'bot';
 chatMessages.push({
@@ -1410,7 +1413,7 @@ selectedMode = chatToLoad.mode || 'general';
 updateBodyClass();
 chatToLoad.messages.forEach(msg => {
 const msgDiv = document.createElement('div');
-msgDiv.className = `msg ${msg.sender}`;
+msgDiv.className = `${msg.sender === 'user' ? 'msg user' : 'bot-response'}`;
 msgDiv.textContent = msg.content;
 chat.appendChild(msgDiv);
 });
@@ -1443,19 +1446,26 @@ loadChatHistory(searchInput.value);
 }
 function hideProfile(){profileModal.style.display='none';}
 function hideChatHistory(){chatHistoryModal.style.display='none';}
+function showWelcomeBanner(text) {
+welcomeBanner.textContent = text;
+welcomeBanner.classList.add('show');
+setTimeout(() => {
+welcomeBanner.classList.add('hide');
+setTimeout(() => {
+welcomeBanner.classList.remove('show', 'hide');
+}, 400);
+}, 2000);
+}
 function loadWelcome(u){
 let w;
 switch(selectedMode) {
 case 'science':
-w = u ? `مرحباً بك مجدداً، ${u.name}! 🌟` : 'مرحباً بك في وضع الرياضيات والعلوم! اسألني أي سؤال رياضي أو علمي وسأساعدك.';
+w = u ? `مرحباً بك مجدداً، ${u.name}! 🌟` : 'مرحباً بك في وضع الرياضيات والعلوم!';
 break;
 default:
-w = u ? `مرحباً بك مجدداً، ${u.name}! 🌟` : 'اهلا بك في كالميرون! اكتب رسالتك هنا...';
+w = u ? `مرحباً بك مجدداً، ${u.name}! 🌟` : 'اهلا بك في كالميرون!';
 }
-const m=document.createElement("div");
-m.className="msg bot";
-m.textContent=w;
-chat.appendChild(m);
+showWelcomeBanner(w);
 setTimeout(()=>msg.focus(),500);
 }
 function adjustHeight(){msg.style.height='auto';const h=window.innerWidth<=500?270:360;msg.style.height=Math.min(msg.scrollHeight,h)+'px';msg.style.overflowY=msg.scrollHeight>h?'auto':'hidden';}
@@ -1491,205 +1501,205 @@ msg.addEventListener("keydown",(e)=>{if(e.key==="Enter"&&!e.shiftKey){e.preventD
 msg.addEventListener("input",()=>{adjustHeight();updateSendBtn();});
 
 function sendMessage(){
-  const t = msg.value.trim();
-  if (!t) return;
+const t = msg.value.trim();
+if (!t) return;
 
-  // Add user message
-  const u = document.createElement("div");
-  u.className = "msg user";
-  u.textContent = t;
-  chat.appendChild(u);
+// Add new user message
+const u = document.createElement("div");
+u.className = "msg user";
+u.textContent = t;
+chat.appendChild(u);
 
-  // Clear input
-  msg.value = "";
-  adjustHeight();
-  updateSendBtn();
+// Clear input
+msg.value = "";
+adjustHeight();
+updateSendBtn();
 
-  // Add animated "thinking..." message
-  const thinkingMsg = document.createElement("div");
-  thinkingMsg.className = "msg bot";
-  thinkingMsg.innerHTML = 'جاري التفكير<span class="thinking-dots"></span>';
-  chat.appendChild(thinkingMsg);
-  chat.scrollTop = chat.scrollHeight;
+// Add animated "thinking..." message WITHOUT bubble — just floating text
+const thinkingMsg = document.createElement("div");
+thinkingMsg.className = "bot-response";
+thinkingMsg.innerHTML = 'جاري التفكير<span class="thinking-dots"></span>';
+chat.appendChild(thinkingMsg);
+chat.scrollTop = chat.scrollHeight;
 
-  isThinking = true;
+isThinking = true;
 
-  // Simulate AI response after 3 seconds
-  setTimeout(() => {
-    // Remove the entire thinking message element
-    if (thinkingMsg.parentNode) {
-      chat.removeChild(thinkingMsg);
-    }
+// Simulate AI response after 3 seconds
+setTimeout(() => {
+// Remove the thinking message
+if (thinkingMsg.parentNode) {
+chat.removeChild(thinkingMsg);
+}
 
-    // Create real response
-    const b = document.createElement("div");
-    b.className = "msg bot";
-    let responseText;
-    switch(selectedMode){
-      case 'science':
-        responseText = 'بناءً على سؤالك العلمي، إليك الإجابة التفصيلية مع الخطوات...';
-        break;
-      default:
-        responseText = 'شكراً على رسالتك! هذا رد تجريبي.';
-    }
-    b.textContent = responseText;
-    chat.appendChild(b);
-    chat.scrollTop = chat.scrollHeight;
-    isThinking = false;
-    saveCurrentChat();
-  }, 3000);
+// Create real response WITHOUT bubble — aligned under user message
+const b = document.createElement("div");
+b.className = "bot-response";
+let responseText;
+switch(selectedMode){
+case 'science':
+responseText = 'بناءً على سؤالك العلمي، إليك الإجابة التفصيلية مع الخطوات...';
+break;
+default:
+responseText = 'مرحباً، أنا كالميرون! جاهز لمساعدتك في أي وقت 💙';
+}
+b.textContent = responseText;
+chat.appendChild(b);
+chat.scrollTop = chat.scrollHeight;
+isThinking = false;
+saveCurrentChat();
+}, 3000);
 }
 
 setInterval(() => {
-  if (chat.children.length > 0) {
-    saveCurrentChat();
-  }
+if (chat.children.length > 0) {
+saveCurrentChat();
+}
 }, 30000);
 function showModeSelectionDialog() {
-  const modeDialog = document.createElement('div');
-  modeDialog.id = 'modeSelectionDialog';
-  modeDialog.style.cssText = `
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.85);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 3000;
-  backdrop-filter: blur(10px);
-  `;
-  const dialogCard = document.createElement('div');
-  dialogCard.style.cssText = `
-  background: rgba(10, 5, 20, 0.95);
-  border: 1px solid var(--border-color);
-  border-radius: 25px;
-  padding: 30px;
-  width: 90%;
-  max-width: 450px;
-  direction: rtl;
-  text-align: center;
-  `;
-  const title = document.createElement('h2');
-  title.textContent = 'اختر وضع التشغيل';
-  title.style.cssText = 'margin-top:0;margin-bottom:25px;color:var(--text-color);font-size:24px;';
-  const modeOptionsDiv = document.createElement('div');
-  modeOptionsDiv.className = 'mode-options';
-  modeOptionsDiv.style.cssText = 'margin:20px 0;display:flex;gap:15px;justify-content:center;flex-wrap:wrap;';
-  const generalOption = document.createElement('div');
-  generalOption.className = 'mode-option';
-  generalOption.dataset.mode = 'general';
-  generalOption.innerHTML = `
-  <h4><span class="mode-icon">🟣</span> عام</h4>
-  <p>دردشة عادية مع الذكاء الاصطناعي</p>
-  `;
-  generalOption.style.cursor = 'pointer';
-  const scienceOption = document.createElement('div');
-  scienceOption.className = 'mode-option';
-  scienceOption.dataset.mode = 'science';
-  scienceOption.innerHTML = `
-  <h4><span class="mode-icon">🔵</span> الرياضيات والعلوم</h4>
-  <p>حل المسائل، التفكير التحليلي</p>
-  `;
-  scienceOption.style.cursor = 'pointer';
-  if (selectedMode === 'general') {
-    generalOption.classList.add('selected');
-  } else {
-    scienceOption.classList.add('selected');
-  }
-  modeOptionsDiv.appendChild(generalOption);
-  modeOptionsDiv.appendChild(scienceOption);
-  generalOption.addEventListener('click', () => {
-    modeOptionsDiv.querySelectorAll('.mode-option').forEach(opt => opt.classList.remove('selected'));
-    generalOption.classList.add('selected');
-    selectedMode = 'general';
-  });
-  scienceOption.addEventListener('click', () => {
-    modeOptionsDiv.querySelectorAll('.mode-option').forEach(opt => opt.classList.remove('selected'));
-    scienceOption.classList.add('selected');
-    selectedMode = 'science';
-  });
-  const confirmBtn = document.createElement('button');
-  confirmBtn.textContent = 'تأكيد';
-  confirmBtn.style.cssText = `
-  padding: 12px 25px;
-  border-radius: 20px;
-  border: none;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s;
-  font-family: "Cairo", sans-serif;
-  background: rgba(0, 150, 255, 0.25);
-  color: #4fc3f7;
-  border: 1px solid rgba(0, 150, 255, 0.7);
-  margin-top: 20px;
-  `;
-  confirmBtn.addEventListener('click', () => {
-    updateBodyClass();
-    const user = checkUser();
-    if (user) {
-      saveUser(user.name, user.birthDate, selectedMode, snowflakesDisabledModes);
-    }
-    chat.innerHTML = '';
-    loadWelcome(user);
-    document.body.removeChild(modeDialog);
-  });
-  dialogCard.appendChild(title);
-  dialogCard.appendChild(modeOptionsDiv);
-  dialogCard.appendChild(confirmBtn);
-  modeDialog.appendChild(dialogCard);
-  document.body.appendChild(modeDialog);
+const modeDialog = document.createElement('div');
+modeDialog.id = 'modeSelectionDialog';
+modeDialog.style.cssText = `
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: rgba(0, 0, 0, 0.85);
+display: flex;
+justify-content: center;
+align-items: center;
+z-index: 3000;
+backdrop-filter: blur(10px);
+`;
+const dialogCard = document.createElement('div');
+dialogCard.style.cssText = `
+background: rgba(10, 5, 20, 0.95);
+border: 1px solid var(--border-color);
+border-radius: 25px;
+padding: 30px;
+width: 90%;
+max-width: 450px;
+direction: rtl;
+text-align: center;
+`;
+const title = document.createElement('h2');
+title.textContent = 'اختر وضع التشغيل';
+title.style.cssText = 'margin-top:0;margin-bottom:25px;color:var(--text-color);font-size:24px;';
+const modeOptionsDiv = document.createElement('div');
+modeOptionsDiv.className = 'mode-options';
+modeOptionsDiv.style.cssText = 'margin:20px 0;display:flex;gap:15px;justify-content:center;flex-wrap:wrap;';
+const generalOption = document.createElement('div');
+generalOption.className = 'mode-option';
+generalOption.dataset.mode = 'general';
+generalOption.innerHTML = `
+<h4><span class="mode-icon">🟣</span> عام</h4>
+<p>دردشة عادية مع الذكاء الاصطناعي</p>
+`;
+generalOption.style.cursor = 'pointer';
+const scienceOption = document.createElement('div');
+scienceOption.className = 'mode-option';
+scienceOption.dataset.mode = 'science';
+scienceOption.innerHTML = `
+<h4><span class="mode-icon">🔵</span> الرياضيات والعلوم</h4>
+<p>حل المسائل، التفكير التحليلي</p>
+`;
+scienceOption.style.cursor = 'pointer';
+if (selectedMode === 'general') {
+generalOption.classList.add('selected');
+} else {
+scienceOption.classList.add('selected');
+}
+modeOptionsDiv.appendChild(generalOption);
+modeOptionsDiv.appendChild(scienceOption);
+generalOption.addEventListener('click', () => {
+modeOptionsDiv.querySelectorAll('.mode-option').forEach(opt => opt.classList.remove('selected'));
+generalOption.classList.add('selected');
+selectedMode = 'general';
+});
+scienceOption.addEventListener('click', () => {
+modeOptionsDiv.querySelectorAll('.mode-option').forEach(opt => opt.classList.remove('selected'));
+scienceOption.classList.add('selected');
+selectedMode = 'science';
+});
+const confirmBtn = document.createElement('button');
+confirmBtn.textContent = 'تأكيد';
+confirmBtn.style.cssText = `
+padding: 12px 25px;
+border-radius: 20px;
+border: none;
+font-size: 16px;
+font-weight: bold;
+cursor: pointer;
+transition: all 0.3s;
+font-family: "Cairo", sans-serif;
+background: rgba(0, 150, 255, 0.25);
+color: #4fc3f7;
+border: 1px solid rgba(0, 150, 255, 0.7);
+margin-top: 20px;
+`;
+confirmBtn.addEventListener('click', () => {
+updateBodyClass();
+const user = checkUser();
+if (user) {
+saveUser(user.name, user.birthDate, selectedMode, snowflakesDisabledModes);
+}
+chat.innerHTML = '';
+loadWelcome(user);
+document.body.removeChild(modeDialog);
+});
+dialogCard.appendChild(title);
+dialogCard.appendChild(modeOptionsDiv);
+dialogCard.appendChild(confirmBtn);
+modeDialog.appendChild(dialogCard);
+document.body.appendChild(modeDialog);
 }
 function handleInitialSetup() {
-  const userData = checkUser();
-  if (userData) {
-    selectedMode = userData.mode || 'general';
-    snowflakesDisabledModes = userData.snowflakesDisabledModes || [];
-    updateBodyClass();
-    if (!snowflakesDisabledModes.includes(selectedMode)) {
-      createSnowflakes();
-    }
-    initialSetupCard.style.display = 'none';
-    loadWelcome(userData);
-    return;
-  }
-  setTimeout(() => {
-    initialSetupCard.classList.add('visible');
-  }, 300);
-  const minDate = new Date();
-  minDate.setFullYear(minDate.getFullYear() - 120);
-  initialBirthDate.min = minDate.toISOString().split('T')[0];
-  const maxDate = new Date();
-  initialBirthDate.max = maxDate.toISOString().split('T')[0];
-  continueInitialBtn.addEventListener('click', () => {
-    const name = initialName.value.trim();
-    const birthDate = initialBirthDate.value;
-    if (!name || !birthDate) {
-      alert('يرجى ملء جميع الحقول');
-      return;
-    }
-    const birthDateObj = new Date(birthDate);
-    const today = new Date();
-    const minBirthDate = new Date();
-    minBirthDate.setFullYear(today.getFullYear() - 120);
-    if (birthDateObj > today || birthDateObj < minBirthDate) {
-      alert('يرجى إدخال تاريخ ميلاد صحيح');
-      return;
-    }
-    saveUser(name, birthDate, selectedMode, snowflakesDisabledModes);
-    initialSetupCard.classList.remove('visible');
-    setTimeout(() => {
-      initialSetupCard.style.display = 'none';
-      loadWelcome({name: name});
-      createSnowflakes();
-    }, 300);
-  });
+const userData = checkUser();
+if (userData) {
+selectedMode = userData.mode || 'general';
+snowflakesDisabledModes = userData.snowflakesDisabledModes || [];
+updateBodyClass();
+if (!snowflakesDisabledModes.includes(selectedMode)) {
+createSnowflakes();
+}
+initialSetupCard.style.display = 'none';
+loadWelcome(userData);
+return;
+}
+setTimeout(() => {
+initialSetupCard.classList.add('visible');
+}, 300);
+const minDate = new Date();
+minDate.setFullYear(minDate.getFullYear() - 120);
+initialBirthDate.min = minDate.toISOString().split('T')[0];
+const maxDate = new Date();
+initialBirthDate.max = maxDate.toISOString().split('T')[0];
+continueInitialBtn.addEventListener('click', () => {
+const name = initialName.value.trim();
+const birthDate = initialBirthDate.value;
+if (!name || !birthDate) {
+alert('يرجى ملء جميع الحقول');
+return;
+}
+const birthDateObj = new Date(birthDate);
+const today = new Date();
+const minBirthDate = new Date();
+minBirthDate.setFullYear(today.getFullYear() - 120);
+if (birthDateObj > today || birthDateObj < minBirthDate) {
+alert('يرجى إدخال تاريخ ميلاد صحيح');
+return;
+}
+saveUser(name, birthDate, selectedMode, snowflakesDisabledModes);
+initialSetupCard.classList.remove('visible');
+setTimeout(() => {
+initialSetupCard.style.display = 'none';
+loadWelcome({name: name});
+createSnowflakes();
+}, 300);
+});
 }
 window.onload = () => {
-  handleInitialSetup();
+handleInitialSetup();
 };
 document.addEventListener('click',(e)=>{if(!actionBtn.contains(e.target)&&!actionMenu.contains(e.target))closeActionMenu();});
 window.addEventListener('resize',adjustHeight);
@@ -1698,11 +1708,3 @@ document.addEventListener('keydown',(e)=>{if(profileModal.style.display==='flex'
 </body>
 </html>
 
-
-
-              <script>
-                              
-              </script>
-                        </body>
-                        </html>
-                    
