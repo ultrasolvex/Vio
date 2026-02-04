@@ -21,6 +21,15 @@ body.mode-science {
 --border-color: rgba(187, 222, 251, 0.3);
 --shadow-color: rgba(187, 222, 251, 0.25);
 }
+body.mode-purple {
+/* ألوان الوضع البنفسجي */
+--primary-color: #000000;
+--secondary-color: #0a0010;
+--accent-color: rgba(138, 43, 226, 0.15);
+--text-color: #ffffff; /* ← تم تغيير لون النص إلى أبيض */
+--border-color: rgba(138, 43, 226, 0.3);
+--shadow-color: rgba(138, 43, 226, 0.25);
+}
 body {
 font-family: "Cairo", sans-serif;
 background: radial-gradient(circle at top, var(--primary-color), var(--secondary-color));
@@ -30,6 +39,19 @@ height: 100vh;
 overflow: hidden;
 display: flex;
 flex-direction: column;
+position: relative;
+}
+/* الظل البنفسجي في أسفل الصفحة للوضع البنفسجي */
+body.mode-purple::after {
+content: '';
+position: fixed;
+bottom: 0;
+left: 0;
+right: 0;
+height: 120px;
+background: linear-gradient(to top, rgba(138, 43, 226, 0.35), transparent);
+pointer-events: none;
+z-index: -1;
 }
 header {
 position: fixed;
@@ -126,6 +148,18 @@ opacity: 1;
 #welcomeBanner.hide {
 transform: translateX(-50%) translateY(-100%);
 opacity: 0;
+}
+/* أنماط الرسائل للوضع البنفسجي */
+body.mode-purple .msg.user {
+background: rgba(138, 43, 226, 0.15);
+color: #ffffff; /* ← نص المستخدم أبيض في الوضع البنفسجي */
+border-top-left-radius: 5px;
+border-top-right-radius: 16px;
+border-bottom-left-radius: 16px;
+border-bottom-right-radius: 16px;
+}
+body.mode-purple .bot-response {
+color: #ffffff; /* ← نص الروبوت أبيض في الوضع البنفسجي */
 }
 .msg {
 margin: 10px;
@@ -908,6 +942,25 @@ color: #bbdefb;
 font-size: 13px;
 line-height: 1.4;
 }
+/* ألوان خاصة للوضع البنفسجي */
+body.mode-purple .mode-option {
+background: rgba(70, 20, 100, 0.7);
+border: 1px solid rgba(138, 43, 226, 0.4);
+}
+body.mode-purple .mode-option:hover {
+background: rgba(90, 30, 130, 0.8);
+border-color: rgba(138, 43, 226, 0.7);
+}
+body.mode-purple .mode-option.selected {
+background: rgba(110, 50, 170, 0.9);
+border-color: rgba(170, 80, 255, 0.8);
+}
+body.mode-purple .mode-option h4 {
+color: #ffffff;
+}
+body.mode-purple .mode-option p {
+color: #b0a0e0;
+}
 /* Mode Icons */
 .mode-icon {
 font-size: 20px;
@@ -1044,12 +1097,16 @@ textarea{font-size:16px;max-height:270px}
 <h3 style="color:#4fc3f7;margin:25px 0 15px 0;font-size:18px;">اختر وضع التشغيل:</h3>
 <div class="mode-options">
 <div class="mode-option selected" data-mode="general">
-<h4><span class="mode-icon">🟣</span> عام</h4>
-<p>دردشة عادية مع الذكاء الاصطناعي</p>
+<h4><span class="mode-icon">🟣</span> Violet Shadow</h4>
+<!-- تم حذف الجملة التوضيحية -->
 </div>
 <div class="mode-option" data-mode="science">
-<h4><span class="mode-icon">🔵</span> الرياضيات والعلوم</h4>
-<p>حل المسائل، التفكير التحليلي</p>
+<h4><span class="mode-icon">🔵</span> Ocean Blue</h4>
+<!-- تم حذف الجملة التوضيحية -->
+</div>
+<div class="mode-option" data-mode="purple">
+<h4><span class="mode-icon">💜</span> Royal Purple</h4>
+<!-- تم حذف الجملة التوضيحية -->
 </div>
 </div>
 </div>
@@ -1133,8 +1190,7 @@ if (!snowflakesDisabledModes.includes('general')) {
 generalOption.classList.add('selected');
 }
 generalOption.innerHTML = `
-<h4><span class="mode-icon">🟣</span> عام</h4>
-<p>دردشة عادية مع الذكاء الاصطناعي</p>
+<h4><span class="mode-icon">🟣</span> Violet Shadow</h4>
 `;
 generalOption.style.cursor = 'pointer';
 generalOption.addEventListener('click', () => {
@@ -1146,15 +1202,27 @@ if (!snowflakesDisabledModes.includes('science')) {
 scienceOption.classList.add('selected');
 }
 scienceOption.innerHTML = `
-<h4><span class="mode-icon">🔵</span> الرياضيات والعلوم</h4>
-<p>حل المسائل، التفكير التحليلي</p>
+<h4><span class="mode-icon">🔵</span> Ocean Blue</h4>
 `;
 scienceOption.style.cursor = 'pointer';
 scienceOption.addEventListener('click', () => {
 scienceOption.classList.toggle('selected');
 });
+const purpleOption = document.createElement('div');
+purpleOption.className = 'mode-option';
+if (!snowflakesDisabledModes.includes('purple')) {
+purpleOption.classList.add('selected');
+}
+purpleOption.innerHTML = `
+<h4><span class="mode-icon">💜</span> Royal Purple</h4>
+`;
+purpleOption.style.cursor = 'pointer';
+purpleOption.addEventListener('click', () => {
+purpleOption.classList.toggle('selected');
+});
 modeOptionsDiv.appendChild(generalOption);
 modeOptionsDiv.appendChild(scienceOption);
+modeOptionsDiv.appendChild(purpleOption);
 const confirmBtn = document.createElement('button');
 confirmBtn.textContent = 'تأكيد';
 confirmBtn.style.cssText = `
@@ -1179,6 +1247,9 @@ snowflakesDisabledModes.push('general');
 if (!scienceOption.classList.contains('selected')) {
 snowflakesDisabledModes.push('science');
 }
+if (!purpleOption.classList.contains('selected')) {
+snowflakesDisabledModes.push('purple');
+}
 updateSnowflakesButtonText();
 const user = checkUser();
 if (user) {
@@ -1200,7 +1271,7 @@ document.body.appendChild(snowflakesDialog);
 function updateSnowflakesButtonText() {
 if (snowflakesDisabledModes.length === 0) {
 snowflakesBtn.textContent = 'تعطيل تأثير الثلج';
-} else if (snowflakesDisabledModes.length === 2) {
+} else if (snowflakesDisabledModes.length === 3) {
 snowflakesBtn.textContent = 'تفعيل تأثير الثلج';
 } else {
 snowflakesBtn.textContent = 'إدارة تأثير الثلج';
@@ -1220,6 +1291,8 @@ const welcomeBanner = document.getElementById("welcomeBanner");
 let isThinking=false;
 let currentChatId = null;
 let selectedMode = 'general';
+// Session persistence key
+const SESSION_KEY = 'kalmeron_active_chat_session';
 modeOptions.forEach(option => {
 option.addEventListener('click', () => {
 modeOptions.forEach(opt => opt.classList.remove('selected'));
@@ -1266,6 +1339,8 @@ profileModal.style.display='flex';
 function startNewChat() {
 chat.innerHTML = '';
 currentChatId = null;
+// Clear session reference
+sessionStorage.removeItem(SESSION_KEY);
 const user = checkUser();
 loadWelcome(user);
 }
@@ -1308,6 +1383,8 @@ if (chats.length > 50) chats.splice(50);
 }
 localStorage.setItem('kalmeronChats', JSON.stringify(chats));
 currentChatId = chatData.id;
+// Save active session ID to sessionStorage
+sessionStorage.setItem(SESSION_KEY, currentChatId);
 return chatData.id;
 }
 function loadChatHistory(filter = '') {
@@ -1419,6 +1496,8 @@ chat.appendChild(msgDiv);
 });
 currentChatId = chatId;
 chat.scrollTop = chat.scrollHeight;
+// Update session reference
+sessionStorage.setItem(SESSION_KEY, currentChatId);
 }
 }
 function toggleFavoriteChat(chatId) {
@@ -1438,6 +1517,7 @@ localStorage.setItem('kalmeronChats', JSON.stringify(filteredChats));
 if (currentChatId === chatId) {
 chat.innerHTML = '';
 currentChatId = null;
+sessionStorage.removeItem(SESSION_KEY);
 const user = checkUser();
 loadWelcome(user);
 }
@@ -1460,7 +1540,10 @@ function loadWelcome(u){
 let w;
 switch(selectedMode) {
 case 'science':
-w = u ? `مرحباً بك مجدداً، ${u.name}! 🌟` : 'مرحباً بك في وضع الرياضيات والعلوم!';
+w = u ? `مرحباً بك مجدداً، ${u.name}! 🌟` : 'مرحباً بك في وضع Ocean Blue!';
+break;
+case 'purple':
+w = u ? `مرحباً بك مجدداً، ${u.name}! 💜` : 'مرحباً بك في Royal Purple!';
 break;
 default:
 w = u ? `مرحباً بك مجدداً، ${u.name}! 🌟` : 'اهلا بك في كالميرون!';
@@ -1499,38 +1582,44 @@ imageUpload.addEventListener('change',updateSendBtn);
 sendBtn.addEventListener('click',()=>{if(msg.value.trim()&&!isThinking)sendMessage();});
 msg.addEventListener("keydown",(e)=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();if(msg.value.trim()&&!isThinking)sendMessage();}});
 msg.addEventListener("input",()=>{adjustHeight();updateSendBtn();});
-
+// === MAIN ENHANCEMENT: PERSIST CHAT ON REFRESH ===
+function restoreActiveSession() {
+const sessionId = sessionStorage.getItem(SESSION_KEY);
+if (sessionId) {
+const chats = JSON.parse(localStorage.getItem('kalmeronChats') || '[]');
+const activeChat = chats.find(c => c.id === sessionId);
+if (activeChat) {
+loadChat(sessionId);
+return true;
+}
+}
+return false;
+}
 function sendMessage(){
 const t = msg.value.trim();
 if (!t) return;
-
 // Add new user message
 const u = document.createElement("div");
 u.className = "msg user";
 u.textContent = t;
 chat.appendChild(u);
-
 // Clear input
 msg.value = "";
 adjustHeight();
 updateSendBtn();
-
 // Add animated "thinking..." message WITHOUT bubble — just floating text
 const thinkingMsg = document.createElement("div");
 thinkingMsg.className = "bot-response";
 thinkingMsg.innerHTML = 'جاري التفكير<span class="thinking-dots"></span>';
 chat.appendChild(thinkingMsg);
 chat.scrollTop = chat.scrollHeight;
-
 isThinking = true;
-
 // Simulate AI response after 3 seconds
 setTimeout(() => {
 // Remove the thinking message
 if (thinkingMsg.parentNode) {
 chat.removeChild(thinkingMsg);
 }
-
 // Create real response WITHOUT bubble — aligned under user message
 const b = document.createElement("div");
 b.className = "bot-response";
@@ -1538,6 +1627,9 @@ let responseText;
 switch(selectedMode){
 case 'science':
 responseText = 'بناءً على سؤالك العلمي، إليك الإجابة التفصيلية مع الخطوات...';
+break;
+case 'purple':
+responseText = 'مرحباً! أنا كالميرون في Royal Purple 💜 جاهز لمساعدتك بأناقة!';
 break;
 default:
 responseText = 'مرحباً، أنا كالميرون! جاهز لمساعدتك في أي وقت 💙';
@@ -1549,7 +1641,6 @@ isThinking = false;
 saveCurrentChat();
 }, 3000);
 }
-
 setInterval(() => {
 if (chat.children.length > 0) {
 saveCurrentChat();
@@ -1592,25 +1683,33 @@ const generalOption = document.createElement('div');
 generalOption.className = 'mode-option';
 generalOption.dataset.mode = 'general';
 generalOption.innerHTML = `
-<h4><span class="mode-icon">🟣</span> عام</h4>
-<p>دردشة عادية مع الذكاء الاصطناعي</p>
+<h4><span class="mode-icon">🟣</span> Violet Shadow</h4>
 `;
 generalOption.style.cursor = 'pointer';
 const scienceOption = document.createElement('div');
 scienceOption.className = 'mode-option';
 scienceOption.dataset.mode = 'science';
 scienceOption.innerHTML = `
-<h4><span class="mode-icon">🔵</span> الرياضيات والعلوم</h4>
-<p>حل المسائل، التفكير التحليلي</p>
+<h4><span class="mode-icon">🔵</span> Ocean Blue</h4>
 `;
 scienceOption.style.cursor = 'pointer';
+const purpleOption = document.createElement('div');
+purpleOption.className = 'mode-option';
+purpleOption.dataset.mode = 'purple';
+purpleOption.innerHTML = `
+<h4><span class="mode-icon">💜</span> Royal Purple</h4>
+`;
+purpleOption.style.cursor = 'pointer';
 if (selectedMode === 'general') {
 generalOption.classList.add('selected');
-} else {
+} else if (selectedMode === 'science') {
 scienceOption.classList.add('selected');
+} else {
+purpleOption.classList.add('selected');
 }
 modeOptionsDiv.appendChild(generalOption);
 modeOptionsDiv.appendChild(scienceOption);
+modeOptionsDiv.appendChild(purpleOption);
 generalOption.addEventListener('click', () => {
 modeOptionsDiv.querySelectorAll('.mode-option').forEach(opt => opt.classList.remove('selected'));
 generalOption.classList.add('selected');
@@ -1620,6 +1719,11 @@ scienceOption.addEventListener('click', () => {
 modeOptionsDiv.querySelectorAll('.mode-option').forEach(opt => opt.classList.remove('selected'));
 scienceOption.classList.add('selected');
 selectedMode = 'science';
+});
+purpleOption.addEventListener('click', () => {
+modeOptionsDiv.querySelectorAll('.mode-option').forEach(opt => opt.classList.remove('selected'));
+purpleOption.classList.add('selected');
+selectedMode = 'purple';
 });
 const confirmBtn = document.createElement('button');
 confirmBtn.textContent = 'تأكيد';
@@ -1663,7 +1767,12 @@ if (!snowflakesDisabledModes.includes(selectedMode)) {
 createSnowflakes();
 }
 initialSetupCard.style.display = 'none';
+// Try to restore active session after setup
+setTimeout(() => {
+if (!restoreActiveSession()) {
 loadWelcome(userData);
+}
+}, 300);
 return;
 }
 setTimeout(() => {
@@ -1693,7 +1802,10 @@ saveUser(name, birthDate, selectedMode, snowflakesDisabledModes);
 initialSetupCard.classList.remove('visible');
 setTimeout(() => {
 initialSetupCard.style.display = 'none';
+// After initial setup, try to restore session or show welcome
+if (!restoreActiveSession()) {
 loadWelcome({name: name});
+}
 createSnowflakes();
 }, 300);
 });
@@ -1707,6 +1819,4 @@ document.addEventListener('keydown',(e)=>{if(profileModal.style.display==='flex'
 </script>
 </body>
 </html>
-
-
 
