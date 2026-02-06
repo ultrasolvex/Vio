@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title> اختيار الصف الدراسي</title>
+<title>اختيار الصف الدراسي</title>
 <style>
 * {
   margin: 0;
@@ -53,12 +53,11 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.12);
   text-decoration: none;
   color: white;
-  display: block;
-  height: 120px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  height: 120px;
 }
 
 .card:hover {
@@ -100,10 +99,10 @@ body {
   <div id="content">
     <h1 class="title">اختر صفك الدراسي</h1>
     <div class="cards-grid">
-      <a href="grade1.html" class="card" onclick="redirectTo('grade1.html', event)">
+      <a href="grade1.html" class="card" onclick="goToPage('grade1.html', event)">
         <div class="card-title">الصف الأول الثانوي</div>
       </a>
-      <a href="grade2.html" class="card" onclick="redirectTo('grade2.html', event)">
+      <a href="grade2.html" class="card" onclick="goToPage('grade2.html', event)">
         <div class="card-title">الصف الثاني الثانوي</div>
       </a>
     </div>
@@ -111,24 +110,19 @@ body {
 </div>
 
 <script>
-// هذا الكود يقوم فقط بتخزين الصفحة أثناء الضغط على الرابط
-function redirectTo(page, event) {
+// توجيه المستخدم عند الضغط على الرابط فقط
+function goToPage(page, event) {
   event.preventDefault(); // منع الانتقال الفوري
-  // عرض رسالة تحميل قصيرة
   document.getElementById('content').innerHTML = '<div class="loading">جاري التوجيه...</div>';
-  // تخزين الصفحة في sessionStorage مؤقتًا فقط عند الضغط على الرابط
-  sessionStorage.setItem('selectedPage', page);
-  // التوجيه بعد قليل لتحسين UX
+  // توجيه مباشر بعد 300ms لتحسين UX
   setTimeout(() => {
     window.location.href = page;
-  }, 400);
+  }, 300);
 }
 
-// عند تحميل الصفحة الرئيسية: لا نوجه تلقائيًا
-// المستخدم سيختار الصف كل مرة عند فتح الصفحة أو العودة إليها
+// عند تحميل الصفحة الرئيسية: لا نفعل أي شيء، المستخدم يختار كل مرة
 window.onload = function() {
-  // يمكن مسح أي قيمة سابقة عند العودة أو الريفريش
-  sessionStorage.removeItem('selectedPage');
+  // هنا لا نحفظ أو نوجه، كل شيء متروك للمستخدم
 };
 </script>
 </body>
