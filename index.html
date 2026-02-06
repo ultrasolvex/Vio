@@ -77,6 +77,7 @@ body {
   color: white;
   font-size: 20px;
   opacity: 0.8;
+  padding: 40px 20px;
 }
 
 @media (max-width: 500px) {
@@ -99,10 +100,10 @@ body {
   <div id="content">
     <h1 class="title">اختر صفك الدراسي</h1>
     <div class="cards-grid">
-      <a href="grade1.html" class="card" onclick="goToPage('grade1.html', event)">
+      <a href="grade1.html" class="card" id="grade1">
         <div class="card-title">الصف الأول الثانوي</div>
       </a>
-      <a href="grade2.html" class="card" onclick="goToPage('grade2.html', event)">
+      <a href="grade2.html" class="card" id="grade2">
         <div class="card-title">الصف الثاني الثانوي</div>
       </a>
     </div>
@@ -110,20 +111,94 @@ body {
 </div>
 
 <script>
-// توجيه المستخدم عند الضغط على الرابط فقط
-function goToPage(page, event) {
-  event.preventDefault(); // منع الانتقال الفوري
-  document.getElementById('content').innerHTML = '<div class="loading">جاري التوجيه...</div>';
-  // توجيه مباشر بعد 300ms لتحسين UX
-  setTimeout(() => {
-    window.location.href = page;
-  }, 300);
+// منع تخزين الصفحة في الكاش عند الرجوع
+if (window.history.replaceState) {
+  window.history.replaceState(null, null, window.location.href);
 }
 
-// عند تحميل الصفحة الرئيسية: لا نفعل أي شيء، المستخدم يختار كل مرة
-window.onload = function() {
-  // هنا لا نحفظ أو نوجه، كل شيء متروك للمستخدم
+// إعادة تعيين المحتوى عند تحميل الصفحة
+window.onpageshow = function(event) {
+  // إذا كانت الصفحة تم تحميلها من الكاش
+  if (event.persisted) {
+    location.reload(); // إعادة تحميل الصفحة
+  }
 };
+
+// التعامل مع النقر على البطاقات
+document.addEventListener('DOMContentLoaded', function() {
+  const grade1 = document.getElementById('grade1');
+  const grade2 = document.getElementById('grade2');
+  
+  function handleCardClick(event, page) {
+    event.preventDefault();
+    
+    // إخفاء المحتوى الحالي
+    document.getElementById('content').innerHTML = '<div class="loading">جاري التوجيه...</div>';
+    
+    // تأخير قصير لتحسين تجربة المستخدم
+    setTimeout(() => {
+      window.location.href = page;
+    }, 300);
+  }
+  
+  grade1.addEventListener('click', function(event) {
+    handleCardClick(event, 'grade1.html');
+  });
+  
+  grade2.addEventListener('click', function(event) {
+    handleCardClick(event, 'grade2.html');
+  });
+});
+
+// استعادة الحالة الأصلية عند العودة للصفحة
+window.onbeforeunload = function() {
+  // لا شيء هنا، فقط لتأكيد أن الصفحة ستُعاد تحميلها
+};
+
+// حل بديل: إعادة تعيين الصفحة عند الرجوع
+window.addEventListener('pageshow', function(event) {
+  const content = document.getElementById('content');
+  // إذا كان هناك محتوى "جاري التوجيه"، أعد تعيينه
+  if (content.innerHTML.includes('جاري التوجيه')) {
+    content.innerHTML = `
+      <h1 class="title">اختر صفك الدراسي</h1>
+      <div class="cards-grid">
+        <a href="grade1.html" class="card" id="grade1">
+          <div class="card-title">الصف الأول الثانوي</div>
+        </a>
+        <a href="grade2.html" class="card" id="grade2">
+          <div class="card-title">الصف الثاني الثانوي</div>
+        </a>
+      </div>
+    `;
+    
+    // إعادة إرفاق الأحداث
+    setTimeout(() => {
+      const grade1 = document.getElementById('grade1');
+      const grade2 = document.getElementById('grade2');
+      
+      if (grade1) {
+        grade1.addEventListener('click', function(event) {
+          event.preventDefault();
+          content.innerHTML = '<div class="loading">جاري التوجيه...</div>';
+          setTimeout(() => {
+            window.location.href = 'grade1.html';
+          }, 300);
+        });
+      }
+      
+      if (grade2) {
+        grade2.addEventListener('click', function(event) {
+          event.preventDefault();
+          content.innerHTML = '<div class="loading">جاري التوجيه...</div>';
+          setTimeout(() => {
+            window.location.href = 'grade2.html';
+          }, 300);
+        });
+      }
+    }, 100);
+  }
+});
 </script>
 </body>
 </html>
