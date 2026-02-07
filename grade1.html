@@ -168,13 +168,13 @@ animation: fadeIn .4s;
 box-shadow: none;
 }
 .user {
-background: rgba(0, 255, 255, 0.15);
-color: aqua;
-align-self: flex-end;
-border: 1px solid rgba(0, 255, 255, 0.3);
-margin-left: auto;
-text-align: right;
-direction: rtl;
+    background: rgba(0, 255, 255, 0.15);
+    color: aqua;
+    align-self: flex-start; /* تغيير هنا أيضًا */
+    border: 1px solid rgba(0, 255, 255, 0.3);
+    margin-right: auto; /* تغيير هنا */
+    text-align: right; /* تغيير هنا */
+    direction: rtl; /* تغيير هنا */
 }
 .bot-response {
 margin: 10px;
@@ -202,6 +202,11 @@ border-radius: 12px;
 margin-top: 8px;
 margin-bottom: 8px;
 display: block;
+}
+/* تعديل خاص: عند وجود نص وصورة معاً، تصبح الصورة صغيرة جداً */
+.msg.has-text-and-image img {
+max-width: 60px;
+max-height: 60px;
 }
 .image-preview-container {
 position: fixed;
@@ -1637,6 +1642,13 @@ const userText = msg.value.trim();
 if ((!userText && !currentImageBase64) || isThinking) return;
 const userMsg = document.createElement("div");
 userMsg.className = "msg user";
+
+// تحديد ما إذا كان هناك نص وصورة معاً
+const hasTextAndImage = userText && currentImageBase64;
+if (hasTextAndImage) {
+userMsg.classList.add('has-text-and-image');
+}
+
 if (currentImageBase64) {
 const img = document.createElement('img');
 img.src = currentImageBase64;
@@ -1808,7 +1820,13 @@ updateBodyClass();
 chatToLoad.messages.forEach(msg => {
 const msgDiv = document.createElement('div');
 msgDiv.className = `${msg.sender === 'user' ? 'msg user' : 'bot-response'}`;
+// إعادة تطبيق نفس المنطق عند تحميل المحادثة
+if (msg.content.includes('data:image')) {
+// نفترض أن الرسالة تحتوي على صورة فقط
 msgDiv.textContent = msg.content;
+} else {
+msgDiv.textContent = msg.content;
+}
 chat.appendChild(msgDiv);
 });
 currentChatId = chatId;
