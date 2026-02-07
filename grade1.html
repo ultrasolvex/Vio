@@ -193,6 +193,16 @@ word-wrap: break-word;
 align-self: flex-end;
 animation: fadeIn .4s;
 }
+/* تنسيق الصورة داخل الرسائل */
+.msg img,
+.bot-response img {
+max-width: 100%;
+height: auto;
+border-radius: 12px;
+margin-top: 8px;
+margin-bottom: 8px;
+display: block;
+}
 .image-preview-container {
 position: fixed;
 bottom: 80px;
@@ -202,11 +212,11 @@ z-index: 999;
 display: none;
 }
 .image-preview {
-width: 512px;
-height: 512px;
+max-width: 100%;
+max-height: 300px;
 border-radius: 12px;
 border: 1px solid var(--border-color);
-object-fit: cover;
+object-fit: contain;
 }
 .image-remove-btn {
 position: absolute;
@@ -995,7 +1005,7 @@ textarea{font-size:16px;max-height:300px}
 .mode-option{min-width:100px;padding:12px;}
 .search-container{margin-bottom:15px;}
 #searchInput{padding:10px 12px 10px 35px;font-size:15px;}
-.image-preview{width:300px;height:300px;}
+.image-preview{max-height:200px;}
 }
 @media (max-width:500px){
 header{font-size:18px;padding:10px 15px}
@@ -1018,7 +1028,7 @@ textarea{font-size:16px;max-height:270px}
 .profile-management{gap:10px;}
 .profile-btn{padding:8px 12px;font-size:14px;}
 .search-icon{left:12px;font-size:16px;}
-.image-preview{width:250px;height:250px;}
+.image-preview{max-height:150px;}
 }
 </style>
 </head>
@@ -1029,18 +1039,15 @@ textarea{font-size:16px;max-height:270px}
 </header>
 <div id="welcomeBanner"></div>
 <div id="chat"></div>
-
 <!-- معاينة الصورة الجديدة -->
 <div class="image-preview-container" id="imagePreviewContainer">
 <img id="imagePreview" class="image-preview" alt="معاينة الصورة">
 <div class="image-remove-btn" id="imageRemoveBtn">×</div>
 </div>
-
 <!-- مودال تكبير الصورة -->
 <div class="image-modal" id="imageModal">
 <img id="modalImage" src="" alt="صورة مكبرة">
 </div>
-
 <div class="input-container">
 <div class="input-area">
 <input type="file" id="imageUpload" accept="image/*" style="display:none">
@@ -1173,161 +1180,138 @@ let snowflakesEnabled = true;
 let snowflakesDisabledModes = [];
 let currentImageBase64 = null;
 const SESSION_KEY = 'kalmeron_active_chat_session';
-
 // Speech Recognition Setup
 let recognition;
 let isRecording = false;
-
 function initSpeechRecognition() {
-    if (!('webkitSpeechRecognition' in window)) {
-        alert('متصفحك لا يدعم خاصية التعرف على الصوت. يرجى استخدام Google Chrome أو Microsoft Edge.');
-        return;
-    }
-    recognition = new webkitSpeechRecognition();
-    recognition.continuous = false;
-    recognition.interimResults = false;
-    recognition.lang = 'ar-EG';
-    
-    recognition.onresult = function(event) {
-        const transcript = event.results[0][0].transcript;
-        msg.value = transcript;
-        adjustHeight();
-        updateSendBtn();
-        stopRecording();
-    };
-    
-    recognition.onerror = function(event) {
-        console.error('خطأ في التعرف على الصوت:', event.error);
-        stopRecording();
-        if (event.error === 'not-allowed') {
-            alert('يرجى السماح بالوصول إلى الميكروفون لاستخدام هذه الميزة.');
-        } else {
-            alert('حدث خطأ أثناء التعرف على الصوت. حاول مرة أخرى.');
-        }
-    };
-    
-    recognition.onend = function() {
-        if (isRecording) {
-            stopRecording();
-        }
-    };
+if (!('webkitSpeechRecognition' in window)) {
+alert('متصفحك لا يدعم خاصية التعرف على الصوت. يرجى استخدام Google Chrome أو Microsoft Edge.');
+return;
 }
-
+recognition = new webkitSpeechRecognition();
+recognition.continuous = false;
+recognition.interimResults = false;
+recognition.lang = 'ar-EG';
+recognition.onresult = function(event) {
+const transcript = event.results[0][0].transcript;
+msg.value = transcript;
+adjustHeight();
+updateSendBtn();
+stopRecording();
+};
+recognition.onerror = function(event) {
+console.error('خطأ في التعرف على الصوت:', event.error);
+stopRecording();
+if (event.error === 'not-allowed') {
+alert('يرجى السماح بالوصول إلى الميكروفون لاستخدام هذه الميزة.');
+} else {
+alert('حدث خطأ أثناء التعرف على الصوت. حاول مرة أخرى.');
+}
+};
+recognition.onend = function() {
+if (isRecording) {
+stopRecording();
+}
+};
+}
 function startRecording() {
-    if (!recognition) initSpeechRecognition();
-    if (!recognition) return;
-    
-    micBtn.classList.add('recording');
-    isRecording = true;
-    recognition.start();
+if (!recognition) initSpeechRecognition();
+if (!recognition) return;
+micBtn.classList.add('recording');
+isRecording = true;
+recognition.start();
 }
-
 function stopRecording() {
-    if (recognition && isRecording) {
-        recognition.stop();
-    }
-    micBtn.classList.remove('recording');
-    isRecording = false;
+if (recognition && isRecording) {
+recognition.stop();
 }
-
+micBtn.classList.remove('recording');
+isRecording = false;
+}
 // تعديل مهم: لا نغلق قائمة الإجراءات أثناء التسجيل
 function closeActionMenu() {
-    if (!isRecording) {
-        actionMenu.classList.remove('open');
-        actionBtn.classList.remove('active');
-    }
+if (!isRecording) {
+actionMenu.classList.remove('open');
+actionBtn.classList.remove('active');
 }
-
+}
 // ربط زر المايك
 micBtn.addEventListener('click', () => {
-    if (isThinking) return;
-    if (isRecording) {
-        stopRecording();
-    } else {
-        startRecording();
-        // تأكد أن القائمة مفتوحة أثناء التسجيل
-        actionMenu.classList.add('open');
-        actionBtn.classList.add('active');
-    }
+if (isThinking) return;
+if (isRecording) {
+stopRecording();
+} else {
+startRecording();
+// تأكد أن القائمة مفتوحة أثناء التسجيل
+actionMenu.classList.add('open');
+actionBtn.classList.add('active');
+}
 });
-
 // عند الضغط على زر "+": لا تؤثر على أيقونات المايك أو الصورة
 newChatBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    startNewChat();
-    // لا نغلق قائمة الإجراءات هنا إطلاقًا
+e.stopPropagation();
+startNewChat();
+// لا نغلق قائمة الإجراءات هنا إطلاقًا
 });
-
 // باقي الأحداث كما هي مع تعديل طفيف لتجنب إغلاق القائمة أثناء التسجيل
 actionBtn.addEventListener('click', () => {
-    if (isThinking || isRecording) return;
-    actionMenu.classList.toggle('open');
-    actionBtn.classList.toggle('active');
+if (isThinking || isRecording) return;
+actionMenu.classList.toggle('open');
+actionBtn.classList.toggle('active');
 });
-
 document.addEventListener('click', (e) => {
-    if (!actionBtn.contains(e.target) && !actionMenu.contains(e.target)) {
-        closeActionMenu();
-    }
+if (!actionBtn.contains(e.target) && !actionMenu.contains(e.target)) {
+closeActionMenu();
+}
 });
-
 // --- معالجة رفع الصورة ---
 imageUploadBtn.addEventListener('click', () => {
-    closeActionMenu();
-    imageUpload.click();
+closeActionMenu();
+imageUpload.click();
 });
-
 imageUpload.addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    
-    // قبول الصور فقط
-    if (!file.type.match('image.*')) {
-        alert('يرجى اختيار ملف صورة (JPEG, PNG, إلخ).');
-        imageUpload.value = '';
-        return;
-    }
-    
-    const reader = new FileReader();
-    reader.onload = function(event) {
-        currentImageBase64 = event.target.result;
-        updateSendBtn();
-        showImagePreview(currentImageBase64);
-    };
-    reader.readAsDataURL(file);
+const file = e.target.files[0];
+if (!file) return;
+// قبول الصور فقط
+if (!file.type.match('image.*')) {
+alert('يرجى اختيار ملف صورة (JPEG, PNG, إلخ).');
+imageUpload.value = '';
+return;
+}
+const reader = new FileReader();
+reader.onload = function(event) {
+currentImageBase64 = event.target.result;
+updateSendBtn();
+showImagePreview(currentImageBase64);
+};
+reader.readAsDataURL(file);
 });
-
 function showImagePreview(base64) {
-    imagePreview.src = base64;
-    imagePreviewContainer.style.display = 'block';
+imagePreview.src = base64;
+imagePreviewContainer.style.display = 'block';
 }
-
 function removeImagePreview() {
-    currentImageBase64 = null;
-    imagePreviewContainer.style.display = 'none';
-    imageUpload.value = '';
-    updateSendBtn();
+currentImageBase64 = null;
+imagePreviewContainer.style.display = 'none';
+imageUpload.value = '';
+updateSendBtn();
 }
-
 // ربط زر إزالة الصورة
 imageRemoveBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    removeImagePreview();
+e.stopPropagation();
+removeImagePreview();
 });
-
 // تكبير الصورة عند النقر
 imagePreview.addEventListener('click', () => {
-    modalImage.src = currentImageBase64;
-    imageModal.style.display = 'flex';
+modalImage.src = currentImageBase64;
+imageModal.style.display = 'flex';
 });
-
 // إغلاق مودال الصورة عند النقر anywhere
 imageModal.addEventListener('click', (e) => {
-    if (e.target === imageModal) {
-        imageModal.style.display = 'none';
-    }
+if (e.target === imageModal) {
+imageModal.style.display = 'none';
+}
 });
-
 // ================================ SNOWFLAKES FUNCTIONS ================================ //
 function createSnowflakes(){
 if (snowflakesDisabledModes.includes(selectedMode)) return;
@@ -1656,10 +1640,7 @@ userMsg.className = "msg user";
 if (currentImageBase64) {
 const img = document.createElement('img');
 img.src = currentImageBase64;
-img.style.width = '512px';
-img.style.height = '512px';
-img.style.borderRadius = '12px';
-img.style.marginBottom = '8px';
+img.alt = "الصورة المرفقة";
 userMsg.appendChild(img);
 }
 if (userText) {
