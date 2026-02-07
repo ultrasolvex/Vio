@@ -1184,6 +1184,105 @@ let selectedMode = 'general';
 let snowflakesEnabled = true;
 let snowflakesDisabledModes = [];
 const SESSION_KEY = 'kalmeron_active_chat_session';
+
+// Speech Recognition Setup
+let recognition;
+let isRecording = false;
+
+function initSpeechRecognition() {
+    if (!('webkitSpeechRecognition' in window)) {
+        alert('متصفحك لا يدعم خاصية التعرف على الصوت. يرجى استخدام Google Chrome أو Microsoft Edge.');
+        return;
+    }
+    recognition = new webkitSpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = 'ar-EG';
+    
+    recognition.onresult = function(event) {
+        const transcript = event.results[0][0].transcript;
+        msg.value = transcript;
+        adjustHeight();
+        updateSendBtn();
+        stopRecording();
+    };
+    
+    recognition.onerror = function(event) {
+        console.error('خطأ في التعرف على الصوت:', event.error);
+        stopRecording();
+        if (event.error === 'not-allowed') {
+            alert('يرجى السماح بالوصول إلى الميكروفون لاستخدام هذه الميزة.');
+        } else {
+            alert('حدث خطأ أثناء التعرف على الصوت. حاول مرة أخرى.');
+        }
+    };
+    
+    recognition.onend = function() {
+        if (isRecording) {
+            stopRecording();
+        }
+    };
+}
+
+function startRecording() {
+    if (!recognition) initSpeechRecognition();
+    if (!recognition) return;
+    
+    micBtn.classList.add('recording');
+    isRecording = true;
+    recognition.start();
+}
+
+function stopRecording() {
+    if (recognition && isRecording) {
+        recognition.stop();
+    }
+    micBtn.classList.remove('recording');
+    isRecording = false;
+}
+
+// تعديل مهم: لا نغلق قائمة الإجراءات أثناء التسجيل
+function closeActionMenu() {
+    if (!isRecording) {
+        actionMenu.classList.remove('open');
+        actionBtn.classList.remove('active');
+    }
+}
+
+// ربط زر المايك
+micBtn.addEventListener('click', () => {
+    if (isThinking) return;
+    if (isRecording) {
+        stopRecording();
+    } else {
+        startRecording();
+        // تأكد أن القائمة مفتوحة أثناء التسجيل
+        actionMenu.classList.add('open');
+        actionBtn.classList.add('active');
+    }
+});
+
+// عند الضغط على زر "+": لا تؤثر على أيقونات المايك أو الصورة
+newChatBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    startNewChat();
+    // لا نغلق قائمة الإجراءات هنا إطلاقًا
+});
+
+// باقي الأحداث كما هي مع تعديل طفيف لتجنب إغلاق القائمة أثناء التسجيل
+actionBtn.addEventListener('click', () => {
+    if (isThinking || isRecording) return;
+    actionMenu.classList.toggle('open');
+    actionBtn.classList.toggle('active');
+});
+
+document.addEventListener('click', (e) => {
+    if (!actionBtn.contains(e.target) && !actionMenu.contains(e.target)) {
+        closeActionMenu();
+    }
+});
+
+// --- باقي الدوال كما هي ---
 function createSnowflakes(){
 if (snowflakesDisabledModes.includes(selectedMode)) return;
 const c=document.body;
@@ -1423,7 +1522,6 @@ isThinking = false;
 }
 function adjustHeight(){msg.style.height='auto';const h=window.innerWidth<=500?270:360;msg.style.height=Math.min(msg.scrollHeight,h)+'px';msg.style.overflowY=msg.scrollHeight>h?'auto':'hidden';}
 function updateSendBtn(){sendBtn.classList.toggle('active',!!(msg.value.trim()||imageUpload.files.length>0));}
-function closeActionMenu(){actionMenu.classList.remove('open');actionBtn.classList.remove('active');}
 function loadChatHistory(filter = '') {
 const chats = JSON.parse(localStorage.getItem('kalmeronChats') || '[]');
 chatHistoryList.innerHTML = '';
@@ -1650,18 +1748,11 @@ loadWelcome({name:n});
 modalCancelBtn.addEventListener('click',hideProfile);
 closeChatHistory.addEventListener('click',hideChatHistory);
 appHeader.addEventListener('click',()=>{loadChatHistory();chatHistoryModal.style.display='flex';});
-newChatBtn.addEventListener('click', (e) => { e.stopPropagation(); startNewChat(); });
-logoutBtn.addEventListener('click', () => { if(confirm('هل أنت متأكد من تسجيل الخروج؟')) { clearUser(); location.reload(); } });
-changeModeBtn.addEventListener('click', () => { hideProfile(); showModeSelectionDialog(); });
-snowflakesBtn.addEventListener('click', toggleSnowflakes);
-searchInput.addEventListener('input', (e) => { loadChatHistory(e.target.value); });
-actionBtn.addEventListener('click',()=>{if(isThinking)return;actionMenu.classList.toggle('open');actionBtn.classList.toggle('active');});
 imageUploadBtn.addEventListener('click',()=>{closeActionMenu();imageUpload.click();});
 imageUpload.addEventListener('change',updateSendBtn);
 sendBtn.addEventListener('click',()=>{if(msg.value.trim()&&!isThinking)sendMessage();});
 msg.addEventListener("keydown",(e)=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();if(msg.value.trim()&&!isThinking)sendMessage();}});
 msg.addEventListener("input",()=>{adjustHeight();updateSendBtn();});
-document.addEventListener('click',(e)=>{if(!actionBtn.contains(e.target)&&!actionMenu.contains(e.target))closeActionMenu();});
 window.addEventListener('resize',adjustHeight);
 document.addEventListener('keydown',(e)=>{if(profileModal.style.display==='flex'&&e.key==='Enter'){e.preventDefault();modalSaveBtn.click();}});
 setInterval(() => { if (chat.children.length > 0) saveCurrentChat(); }, 30000);
