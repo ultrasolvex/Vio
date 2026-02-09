@@ -29,6 +29,14 @@ body.mode-purple {
 --border-color: rgba(138, 43, 226, 0.3);
 --shadow-color: rgba(138, 43, 226, 0.25);
 }
+body.mode-facebook {
+--primary-color: #ffffff;
+--secondary-color: #f0f2f5;
+--accent-color: rgba(24, 119, 242, 0.1);
+--text-color: #1c1e21;
+--border-color: rgba(0, 0, 0, 0.1);
+--shadow-color: rgba(0, 0, 0, 0.1);
+}
 body {
 font-family: "Cairo", sans-serif;
 background: radial-gradient(circle at top, var(--primary-color), var(--secondary-color));
@@ -50,6 +58,57 @@ height: 120px;
 background: linear-gradient(to top, rgba(138, 43, 226, 0.35), transparent);
 pointer-events: none;
 z-index: -1;
+}
+body.mode-facebook {
+background: #ffffff;
+color: #1c1e21;
+}
+body.mode-facebook .msg.user {
+background: #e4e6ea;
+color: #1c1e21;
+border: 1px solid #ccc;
+}
+body.mode-facebook .bot-response {
+color: #1c1e21;
+}
+body.mode-facebook header {
+background: rgba(255, 255, 255, 0.95);
+color: #1c1e21;
+border: 1px solid #ddd;
+box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+body.mode-facebook .input-area {
+background: #f0f2f5;
+border: 1px solid #ddd;
+}
+body.mode-facebook textarea {
+color: #1c1e21;
+caret-color: #1877f2 !important;
+}
+body.mode-facebook textarea::placeholder {
+color: #65676b;
+}
+body.mode-facebook .send-btn {
+background: #1877f2;
+border: none;
+}
+body.mode-facebook .send-btn:hover {
+background: #166fe5;
+}
+body.mode-facebook .action-btn {
+background: #f0f2f5;
+border: 1px solid #ddd;
+}
+body.mode-facebook .action-btn:hover {
+background: #e4e6ea;
+}
+body.mode-facebook #chat::-webkit-scrollbar-thumb {
+background: #8a8d91;
+}
+body.mode-facebook #welcomeBanner {
+background: #f0f2f5;
+color: #1c1e21;
+border: 1px solid #ddd;
 }
 header {
 position: fixed;
@@ -168,13 +227,13 @@ animation: fadeIn .4s;
 box-shadow: none;
 }
 .user {
-    background: rgba(0, 255, 255, 0.15);
-    color: aqua;
-    align-self: flex-start; /* تغيير هنا أيضًا */
-    border: 1px solid rgba(0, 255, 255, 0.3);
-    margin-right: auto; /* تغيير هنا */
-    text-align: right; /* تغيير هنا */
-    direction: rtl; /* تغيير هنا */
+background: rgba(0, 255, 255, 0.15);
+color: aqua;
+align-self: flex-end;
+border: 1px solid rgba(0, 255, 255, 0.3);
+margin-left: auto;
+text-align: right;
+direction: rtl;
 }
 .bot-response {
 margin: 10px;
@@ -192,71 +251,6 @@ max-width: 75%;
 word-wrap: break-word;
 align-self: flex-end;
 animation: fadeIn .4s;
-}
-/* تنسيق الصورة داخل الرسائل */
-.msg img,
-.bot-response img {
-max-width: 100%;
-height: auto;
-border-radius: 12px;
-margin-top: 8px;
-margin-bottom: 8px;
-display: block;
-}
-/* تعديل خاص: عند وجود نص وصورة معاً، تصبح الصورة صغيرة جداً */
-.msg.has-text-and-image img {
-max-width: 60px;
-max-height: 60px;
-}
-.image-preview-container {
-position: fixed;
-bottom: 80px;
-left: 50%;
-transform: translateX(-50%);
-z-index: 999;
-display: none;
-}
-.image-preview {
-max-width: 100%;
-max-height: 300px;
-border-radius: 12px;
-border: 1px solid var(--border-color);
-object-fit: contain;
-}
-.image-remove-btn {
-position: absolute;
-top: -10px;
-right: -10px;
-width: 24px;
-height: 24px;
-border-radius: 50%;
-background: rgba(255, 0, 80, 0.8);
-color: #ffcccc;
-border: 2px solid white;
-display: flex;
-justify-content: center;
-align-items: center;
-cursor: pointer;
-font-weight: bold;
-z-index: 1000;
-}
-.image-modal {
-position: fixed;
-top: 0;
-left: 0;
-width: 100%;
-height: 100%;
-background: rgba(0, 0, 0, 0.9);
-display: none;
-justify-content: center;
-align-items: center;
-z-index: 2000;
-}
-.image-modal img {
-max-width: 90%;
-max-height: 90%;
-border: 2px solid var(--border-color);
-border-radius: 12px;
 }
 @keyframes fadeIn {
 from { opacity: 0; transform: translateY(10px); }
@@ -492,6 +486,40 @@ align-items: center;
 color: var(--text-color);
 font-size: 14px;
 }
+
+.todo-list-section {
+background: rgba(0, 255, 255, 0.15);
+border: 1px solid var(--border-color);
+border-radius: 15px;
+padding: 15px;
+margin: 10px 0;
+cursor: pointer;
+transition: all 0.3s ease;
+position: relative;
+}
+.todo-list-section:hover {
+background: rgba(0, 255, 255, 0.25);
+transform: translateY(-2px);
+border-color: rgba(0, 255, 255, 0.6);
+}
+.todo-list-section h3 {
+margin: 0 0 8px 0;
+color: var(--text-color);
+font-size: 18px;
+display: flex;
+align-items: center;
+gap: 10px;
+}
+.todo-list-section h3::before {
+content: "✅";
+font-size: 20px;
+}
+.todo-list-section p {
+margin: 0;
+color: #ccc;
+font-size: 14px;
+}
+
 .favorites-header {
 background: rgba(0, 255, 255, 0.15);
 border: 1px solid var(--border-color);
@@ -991,6 +1019,25 @@ color: #ffffff;
 body.mode-purple .mode-option p {
 color: #b0a0e0;
 }
+body.mode-facebook .mode-option {
+background: #f0f2f5;
+border: 1px solid #ddd;
+color: #1c1e21;
+}
+body.mode-facebook .mode-option:hover {
+background: #e4e6ea;
+border-color: #bbb;
+}
+body.mode-facebook .mode-option.selected {
+background: #d8dadc;
+border-color: #999;
+}
+body.mode-facebook .mode-option h4 {
+color: #1877f2;
+}
+body.mode-facebook .mode-option p {
+color: #65676b;
+}
 .mode-icon {
 font-size: 20px;
 margin-right: 5px;
@@ -1001,16 +1048,15 @@ textarea{font-size:16px;max-height:300px}
 .user,.bot-response{max-width:85%}
 .profile-card,.chat-history-card,.initial-setup-card{padding:20px;width:95%}
 .form-group input,.initial-form-group input{font-size:15px;padding:10px}
-.chat-history-item,.personal-profile-section{padding:12px}
-.personal-profile-section h3{font-size:16px}
+.chat-history-item,.personal-profile-section,.todo-list-section{padding:12px}
+.personal-profile-section h3,.todo-list-section h3{font-size:16px}
 .favorites-header,.chats-header{font-size:14px;padding:8px 12px}
-.header{padding:12px 15px;}
+header{padding:12px 15px;}
 #newChatBtn{width:32px;height:32px;font-size:20px;}
 .mode-options{gap:10px;}
 .mode-option{min-width:100px;padding:12px;}
 .search-container{margin-bottom:15px;}
 #searchInput{padding:10px 12px 10px 35px;font-size:15px;}
-.image-preview{max-height:200px;}
 }
 @media (max-width:500px){
 header{font-size:18px;padding:10px 15px}
@@ -1023,8 +1069,8 @@ textarea{font-size:16px;max-height:270px}
 .btn,.initial-btn{padding:10px 20px;font-size:15px}
 .chat-action-btn{width:24px;height:24px;font-size:12px}
 .close-modal{width:26px;height:26px;font-size:16px}
-.personal-profile-section{padding:10px}
-.personal-profile-section h3{font-size:15px}
+.personal-profile-section,.todo-list-section{padding:10px}
+.personal-profile-section h3,.todo-list-section h3{font-size:15px}
 .favorites-header,.chats-header{font-size:13px;padding:6px 10px}
 .personal-profile-section .edit-icon{width:20px;height:20px;font-size:12px}
 #newChatBtn{width:28px;height:28px;font-size:18px;}
@@ -1033,7 +1079,6 @@ textarea{font-size:16px;max-height:270px}
 .profile-management{gap:10px;}
 .profile-btn{padding:8px 12px;font-size:14px;}
 .search-icon{left:12px;font-size:16px;}
-.image-preview{max-height:150px;}
 }
 </style>
 </head>
@@ -1044,15 +1089,6 @@ textarea{font-size:16px;max-height:270px}
 </header>
 <div id="welcomeBanner"></div>
 <div id="chat"></div>
-<!-- معاينة الصورة الجديدة -->
-<div class="image-preview-container" id="imagePreviewContainer">
-<img id="imagePreview" class="image-preview" alt="معاينة الصورة">
-<div class="image-remove-btn" id="imageRemoveBtn">×</div>
-</div>
-<!-- مودال تكبير الصورة -->
-<div class="image-modal" id="imageModal">
-<img id="modalImage" src="" alt="صورة مكبرة">
-</div>
 <div class="input-container">
 <div class="input-area">
 <input type="file" id="imageUpload" accept="image/*" style="display:none">
@@ -1136,6 +1172,9 @@ textarea{font-size:16px;max-height:270px}
 <div class="mode-option" data-mode="purple">
 <h4><span class="mode-icon">💜</span> Royal Purple</h4>
 </div>
+<div class="mode-option" data-mode="facebook">
+<h4><span class="mode-icon">🤍</span> Facebook White</h4>
+</div>
 </div>
 </div>
 <div class="initial-button-group">
@@ -1172,152 +1211,14 @@ initialName = document.getElementById("initialName"),
 initialBirthDate = document.getElementById("initialBirthDate"),
 continueInitialBtn = document.getElementById("continueInitialBtn"),
 welcomeBanner = document.getElementById("welcomeBanner"),
-modeOptions = document.querySelectorAll('.mode-option'),
-imagePreviewContainer = document.getElementById('imagePreviewContainer'),
-imagePreview = document.getElementById('imagePreview'),
-imageRemoveBtn = document.getElementById('imageRemoveBtn'),
-imageModal = document.getElementById('imageModal'),
-modalImage = document.getElementById('modalImage');
+modeOptions = document.querySelectorAll('.mode-option');
 let isThinking = false;
 let currentChatId = null;
 let selectedMode = 'general';
 let snowflakesEnabled = true;
 let snowflakesDisabledModes = [];
-let currentImageBase64 = null;
 const SESSION_KEY = 'kalmeron_active_chat_session';
-// Speech Recognition Setup
-let recognition;
-let isRecording = false;
-function initSpeechRecognition() {
-if (!('webkitSpeechRecognition' in window)) {
-alert('متصفحك لا يدعم خاصية التعرف على الصوت. يرجى استخدام Google Chrome أو Microsoft Edge.');
-return;
-}
-recognition = new webkitSpeechRecognition();
-recognition.continuous = false;
-recognition.interimResults = false;
-recognition.lang = 'ar-EG';
-recognition.onresult = function(event) {
-const transcript = event.results[0][0].transcript;
-msg.value = transcript;
-adjustHeight();
-updateSendBtn();
-stopRecording();
-};
-recognition.onerror = function(event) {
-console.error('خطأ في التعرف على الصوت:', event.error);
-stopRecording();
-if (event.error === 'not-allowed') {
-alert('يرجى السماح بالوصول إلى الميكروفون لاستخدام هذه الميزة.');
-} else {
-alert('حدث خطأ أثناء التعرف على الصوت. حاول مرة أخرى.');
-}
-};
-recognition.onend = function() {
-if (isRecording) {
-stopRecording();
-}
-};
-}
-function startRecording() {
-if (!recognition) initSpeechRecognition();
-if (!recognition) return;
-micBtn.classList.add('recording');
-isRecording = true;
-recognition.start();
-}
-function stopRecording() {
-if (recognition && isRecording) {
-recognition.stop();
-}
-micBtn.classList.remove('recording');
-isRecording = false;
-}
-// تعديل مهم: لا نغلق قائمة الإجراءات أثناء التسجيل
-function closeActionMenu() {
-if (!isRecording) {
-actionMenu.classList.remove('open');
-actionBtn.classList.remove('active');
-}
-}
-// ربط زر المايك
-micBtn.addEventListener('click', () => {
-if (isThinking) return;
-if (isRecording) {
-stopRecording();
-} else {
-startRecording();
-// تأكد أن القائمة مفتوحة أثناء التسجيل
-actionMenu.classList.add('open');
-actionBtn.classList.add('active');
-}
-});
-// عند الضغط على زر "+": لا تؤثر على أيقونات المايك أو الصورة
-newChatBtn.addEventListener('click', (e) => {
-e.stopPropagation();
-startNewChat();
-// لا نغلق قائمة الإجراءات هنا إطلاقًا
-});
-// باقي الأحداث كما هي مع تعديل طفيف لتجنب إغلاق القائمة أثناء التسجيل
-actionBtn.addEventListener('click', () => {
-if (isThinking || isRecording) return;
-actionMenu.classList.toggle('open');
-actionBtn.classList.toggle('active');
-});
-document.addEventListener('click', (e) => {
-if (!actionBtn.contains(e.target) && !actionMenu.contains(e.target)) {
-closeActionMenu();
-}
-});
-// --- معالجة رفع الصورة ---
-imageUploadBtn.addEventListener('click', () => {
-closeActionMenu();
-imageUpload.click();
-});
-imageUpload.addEventListener('change', (e) => {
-const file = e.target.files[0];
-if (!file) return;
-// قبول الصور فقط
-if (!file.type.match('image.*')) {
-alert('يرجى اختيار ملف صورة (JPEG, PNG, إلخ).');
-imageUpload.value = '';
-return;
-}
-const reader = new FileReader();
-reader.onload = function(event) {
-currentImageBase64 = event.target.result;
-updateSendBtn();
-showImagePreview(currentImageBase64);
-};
-reader.readAsDataURL(file);
-});
-function showImagePreview(base64) {
-imagePreview.src = base64;
-imagePreviewContainer.style.display = 'block';
-}
-function removeImagePreview() {
-currentImageBase64 = null;
-imagePreviewContainer.style.display = 'none';
-imageUpload.value = '';
-updateSendBtn();
-}
-// ربط زر إزالة الصورة
-imageRemoveBtn.addEventListener('click', (e) => {
-e.stopPropagation();
-removeImagePreview();
-});
-// تكبير الصورة عند النقر
-imagePreview.addEventListener('click', () => {
-modalImage.src = currentImageBase64;
-imageModal.style.display = 'flex';
-});
-// إغلاق مودال الصورة عند النقر anywhere
-imageModal.addEventListener('click', (e) => {
-if (e.target === imageModal) {
-imageModal.style.display = 'none';
-}
-});
-// ================================ SNOWFLAKES FUNCTIONS ================================ //
+
 function createSnowflakes(){
 if (snowflakesDisabledModes.includes(selectedMode)) return;
 const c=document.body;
@@ -1339,8 +1240,7 @@ t.textContent=`@keyframes fall{0%{transform:translateY(0) translateX(0)}100%{tra
 document.head.appendChild(t);
 }
 function clearSnowflakes() {
-const snowflakes = document.querySelectorAll('.snowflake');
-snowflakes.forEach(s => s.remove());
+document.querySelectorAll('.snowflake').forEach(s => s.remove());
 const style = document.querySelector('style[textContent*="@keyframes fall"]');
 if (style) style.remove();
 }
@@ -1351,23 +1251,14 @@ snowflakesDisabledModes = snowflakesDisabledModes.filter(m => m !== selectedMode
 snowflakesDisabledModes.push(selectedMode);
 }
 const user = checkUser();
-if (user) {
-saveUser(user.name, user.birthDate, selectedMode, snowflakesDisabledModes);
-}
+if (user) saveUser(user.name, user.birthDate, selectedMode, snowflakesDisabledModes);
 updateSnowflakesButtonText();
 clearSnowflakes();
-if (!snowflakesDisabledModes.includes(selectedMode)) {
-createSnowflakes();
-}
+if (!snowflakesDisabledModes.includes(selectedMode)) createSnowflakes();
 }
 function updateSnowflakesButtonText() {
-if (snowflakesDisabledModes.includes(selectedMode)) {
-snowflakesBtn.textContent = 'تفعيل تأثير الثلج';
-} else {
-snowflakesBtn.textContent = 'تعطيل تأثير الثلج';
+snowflakesBtn.textContent = snowflakesDisabledModes.includes(selectedMode) ? 'تفعيل تأثير الثلج' : 'تعطيل تأثير الثلج';
 }
-}
-// ================================ MODE SELECTION ================================ //
 modeOptions.forEach(option => {
 option.addEventListener('click', () => {
 modeOptions.forEach(opt => opt.classList.remove('selected'));
@@ -1379,29 +1270,31 @@ updateBodyClass();
 function updateBodyClass() {
 document.body.className = `mode-${selectedMode}`;
 clearSnowflakes();
-if (!snowflakesDisabledModes.includes(selectedMode)) {
-setTimeout(createSnowflakes, 100);
+if (!snowflakesDisabledModes.includes(selectedMode)) setTimeout(createSnowflakes, 100);
 }
-}
-// ================================ USER MANAGEMENT ================================ //
-function checkUser(){const d=localStorage.getItem('kalmeronUserData');return d?JSON.parse(d):null;}
-function saveUser(n,b,m,snowDisabledModes){localStorage.setItem('kalmeronUserData',JSON.stringify({name:n,birthDate:b,mode:m||'general',snowflakesDisabledModes: snowDisabledModes || [],registeredAt:new Date().toISOString()}));}
+function checkUser(){return JSON.parse(localStorage.getItem('kalmeronUserData')||'null');}
+function saveUser(n,b,m,snowDisabledModes){localStorage.setItem('kalmeronUserData',JSON.stringify({name:n,birthDate:b,mode:m||'general',snowflakesDisabledModes:snowDisabledModes||[],registeredAt:new Date().toISOString()}));}
 function clearUser(){localStorage.removeItem('kalmeronUserData');}
 function createPersonalProfileSection() {
 const profileSection = document.createElement('div');
 profileSection.className = 'personal-profile-section';
 const user = checkUser();
 const displayName = user && user.name !== 'زائر' ? user.name : 'الملف الشخصي';
-profileSection.innerHTML = `
-<h3>${displayName}</h3>
-<p>اضغط لتعديل معلومات حسابك</p>
-<div class="edit-icon">✏️</div>
-`;
-profileSection.addEventListener('click', () => {
-showProfile();
-});
+profileSection.innerHTML = `<h3>${displayName}</h3><p>اضغط لتعديل معلومات حسابك</p><div class="edit-icon">✏️</div>`;
+profileSection.addEventListener('click', () => showProfile());
 return profileSection;
 }
+
+function createTodoListSection() {
+const todoSection = document.createElement('div');
+todoSection.className = 'todo-list-section';
+todoSection.innerHTML = `<h3>قائمة المهام (To-Do List)</h3><p>إدارة مهامك اليومية</p>`;
+todoSection.addEventListener('click', () => {
+    window.location.href = 'todo-list.html';
+});
+return todoSection;
+}
+
 function showProfile(){
 const u=checkUser();
 if(u){
@@ -1413,13 +1306,10 @@ profileModal.style.display='flex';
 }
 }
 function hideProfile(){profileModal.style.display='none';}
-// ================================ CHAT MANAGEMENT ================================ //
 function startNewChat() {
 chat.innerHTML = '';
 currentChatId = null;
 sessionStorage.removeItem(SESSION_KEY);
-currentImageBase64 = null;
-removeImagePreview();
 const user = checkUser();
 loadWelcome(user);
 }
@@ -1436,13 +1326,8 @@ return 'محادثة جديدة';
 function saveCurrentChat() {
 if (!chat.children.length) return null;
 const chatMessages = [];
-const messages = chat.querySelectorAll('.msg, .bot-response');
-messages.forEach(msg => {
-const sender = msg.classList.contains('user') ? 'user' : 'bot';
-chatMessages.push({
-sender: sender,
-content: msg.textContent
-});
+chat.querySelectorAll('.msg, .bot-response').forEach(msg => {
+chatMessages.push({sender: msg.classList.contains('user') ? 'user' : 'bot', content: msg.textContent});
 });
 const chatData = {
 id: currentChatId || generateChatId(),
@@ -1452,11 +1337,10 @@ timestamp: new Date().toISOString(),
 favorited: false,
 mode: selectedMode
 };
-const chats = JSON.parse(localStorage.getItem('kalmeronChats') || '[]');
+let chats = JSON.parse(localStorage.getItem('kalmeronChats') || '[]');
 const existingIndex = chats.findIndex(c => c.id === chatData.id);
-if (existingIndex !== -1) {
-chats[existingIndex] = chatData;
-} else {
+if (existingIndex !== -1) chats[existingIndex] = chatData;
+else {
 chats.unshift(chatData);
 if (chats.length > 50) chats.splice(50);
 }
@@ -1470,30 +1354,22 @@ welcomeBanner.textContent = text;
 welcomeBanner.classList.add('show');
 setTimeout(() => {
 welcomeBanner.classList.add('hide');
-setTimeout(() => {
-welcomeBanner.classList.remove('show', 'hide');
-}, 400);
+setTimeout(() => welcomeBanner.classList.remove('show', 'hide'), 400);
 }, 2000);
 }
 function loadWelcome(u){
 let w;
 switch(selectedMode) {
-case 'science':
-w = u ? `مرحباً بك مجدداً، ${u.name}! 🌟` : 'مرحباً بك في وضع Ocean Blue!';
-break;
-case 'purple':
-w = u ? `مرحباً بك مجدداً، ${u.name}! 💜` : 'مرحباً بك في Royal Purple!';
-break;
-default:
-w = u ? `مرحباً بك مجدداً، ${u.name}! 🌟` : 'اهلا بك في كالميرون!';
+case 'science': w = u ? `مرحباً بك مجدداً، ${u.name}! 🌟` : 'مرحباً بك في وضع Ocean Blue!'; break;
+case 'purple': w = u ? `مرحباً بك مجدداً، ${u.name}! 💜` : 'مرحباً بك في Royal Purple!'; break;
+case 'facebook': w = u ? `مرحباً بك مجدداً، ${u.name}! 👋` : 'مرحباً بك في وضع Facebook White!'; break;
+default: w = u ? `مرحباً بك مجدداً، ${u.name}! 🌟` : 'اهلا بك في كالميرون!';
 }
 showWelcomeBanner(w);
 setTimeout(()=>msg.focus(),500);
 }
-// ================================ RAG INTEGRATION ================================ //
-async function sendToRAG(question, imageBase64 = null) {
+async function sendToRAG(question) {
 try {
-console.log('🚀 إرسال السؤال للـ RAG:', question);
 let userId = localStorage.getItem('kalmeron_user_id');
 if (!userId) {
 userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
@@ -1504,165 +1380,60 @@ if (!sessionId) {
 sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
 sessionStorage.setItem('kalmeron_session_id', sessionId);
 }
-const payload = {
-question: question,
-timestamp: new Date().toISOString(),
-sessionId: sessionId,
-userId: userId,
-mode: selectedMode
-};
-if (imageBase64) {
-payload.image = imageBase64;
-}
 const response = await fetch(N8N_WEBHOOK_URL, {
 method: 'POST',
-headers: {
-'Content-Type': 'application/json',
-'Accept': 'application/json'
-},
-body: JSON.stringify(payload)
+headers: {'Content-Type': 'application/json','Accept': 'application/json'},
+body: JSON.stringify({question, timestamp: new Date().toISOString(), sessionId, userId, mode: selectedMode})
 });
-if (!response.ok) {
-throw new Error(`خطأ في الاتصال: ${response.status} ${response.statusText}`);
-}
+if (!response.ok) throw new Error(`خطأ في الاتصال: ${response.status} ${response.statusText}`);
 const responseText = await response.text();
-console.log('📥 الرد من الخادم:', responseText);
 let parsedData;
-try {
-parsedData = JSON.parse(responseText);
-} catch (parseError) {
-console.log('⚠️ الرد ليس JSON، استخدمه كنص:', responseText);
-parsedData = { answer: responseText };
-}
+try { parsedData = JSON.parse(responseText); } catch (parseError) { parsedData = { answer: responseText }; }
 const result = extractAnswerFromResponse(parsedData);
 return result;
 } catch (error) {
 console.error('❌ خطأ في الاتصال بالـ RAG:', error);
-return {
-answer: 'عذراً، حدث خطأ في الاتصال بالخادم. حاول مرة أخرى.',
-sources: [],
-confidence: 0,
-error: true
-};
+return {answer: 'عذراً، حدث خطأ في الاتصال بالخادم. حاول مرة أخرى.', sources: [], confidence: 0, error: true};
 }
 }
 function extractAnswerFromResponse(data) {
-console.log('🔍 معالجة البيانات المستلمة:', data);
 if (typeof data === 'string') {
-try {
-const parsed = JSON.parse(data);
-return extractAnswerFromResponse(parsed);
-} catch (e) {
-return {
-answer: data,
-sources: [],
-confidence: 0.8
-};
+try { return extractAnswerFromResponse(JSON.parse(data)); } catch (e) {
+return {answer: data, sources: [], confidence: 0.8};
 }
 }
 if (data && typeof data === 'object') {
-if (data.answer && typeof data.answer === 'string') {
-console.log('✅ وجدنا الإجابة في مفتاح "answer"');
-return {
-answer: data.answer,
-sources: data.sources || [],
-confidence: data.confidence || 0.9
-};
-}
-if (data.output && typeof data.output === 'string') {
-console.log('✅ وجدنا الإجابة في مفتاح "output"');
-return {
-answer: data.output,
-sources: data.sources || [],
-confidence: data.confidence || 0.9
-};
-}
+if (data.answer && typeof data.answer === 'string') return {answer: data.answer, sources: data.sources || [], confidence: data.confidence || 0.9};
+if (data.output && typeof data.output === 'string') return {answer: data.output, sources: data.sources || [], confidence: data.confidence || 0.9};
 const commonKeys = ['text', 'message', 'response', 'content', 'result', 'generated_text', 'completion'];
 for (const key of commonKeys) {
-if (data[key] && typeof data[key] === 'string') {
-console.log(`✅ وجدنا الإجابة في مفتاح "${key}"`);
-return {
-answer: data[key],
-sources: data.sources || [],
-confidence: data.confidence || 0.8
-};
-}
+if (data[key] && typeof data[key] === 'string') return {answer: data[key], sources: data.sources || [], confidence: data.confidence || 0.8};
 }
 if (data.$node && data.$node["AI Agent"] && data.$node["AI Agent"].json && data.$node["AI Agent"].json.output) {
-console.log('✅ وجدنا الإجابة في هيكل n8n المعقد');
-return {
-answer: data.$node["AI Agent"].json.output,
-sources: data.sources || [],
-confidence: data.confidence || 0.9
-};
+return {answer: data.$node["AI Agent"].json.output, sources: data.sources || [], confidence: data.confidence || 0.9};
 }
 for (const key in data) {
-if (typeof data[key] === 'string' && data[key].trim().length > 10) {
-if (!['timestamp', 'sessionId', 'userId', 'mode', 'id', 'status', 'question'].includes(key)) {
-console.log(`🔍 وجدنا نص في مفتاح "${key}"`);
-return {
-answer: data[key],
-sources: [],
-confidence: 0.7
-};
-}
+if (typeof data[key] === 'string' && data[key].trim().length > 10 && !['timestamp', 'sessionId', 'userId', 'mode', 'id', 'status', 'question'].includes(key)) {
+return {answer: data[key], sources: [], confidence: 0.7};
 }
 if (typeof data[key] === 'object' && data[key] !== null) {
 const nestedResult = extractAnswerFromResponse(data[key]);
-if (nestedResult.answer) {
-return nestedResult;
+if (nestedResult.answer) return nestedResult;
 }
 }
 }
+return {answer: '⚠️ تم استلام رد من الخادم لكن لم أتمكن من استخراج الإجابة.', sources: [], confidence: 0.3};
 }
-console.error('❌ لم نجد إجابة في البيانات:', data);
-return {
-answer: '⚠️ تم استلام رد من الخادم لكن لم أتمكن من استخراج الإجابة.',
-sources: [],
-confidence: 0.3
-};
-}
-// ================================ TYPING EFFECT FUNCTION ================================ //
-function typeText(element, text, speed = 20) {
-element.textContent = '';
-let i = 0;
-const typingInterval = setInterval(() => {
-if (i < text.length) {
-element.textContent += text.charAt(i);
-i++;
-element.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-} else {
-clearInterval(typingInterval);
-}
-}, speed);
-}
-// ================================ MAIN MESSAGE FUNCTION ================================ //
 async function sendMessage(){
 const userText = msg.value.trim();
-if ((!userText && !currentImageBase64) || isThinking) return;
+if (!userText || isThinking) return;
 const userMsg = document.createElement("div");
 userMsg.className = "msg user";
-
-// تحديد ما إذا كان هناك نص وصورة معاً
-const hasTextAndImage = userText && currentImageBase64;
-if (hasTextAndImage) {
-userMsg.classList.add('has-text-and-image');
-}
-
-if (currentImageBase64) {
-const img = document.createElement('img');
-img.src = currentImageBase64;
-img.alt = "الصورة المرفقة";
-userMsg.appendChild(img);
-}
-if (userText) {
-userMsg.appendChild(document.createTextNode(userText));
-}
+userMsg.textContent = userText;
 chat.appendChild(userMsg);
 msg.value = "";
 adjustHeight();
 updateSendBtn();
-removeImagePreview();
 const thinkingMsg = document.createElement("div");
 thinkingMsg.className = "bot-response";
 thinkingMsg.innerHTML = 'جاري التفكير<span class="thinking-dots"></span>';
@@ -1670,57 +1441,40 @@ chat.appendChild(thinkingMsg);
 chat.scrollTop = chat.scrollHeight;
 isThinking = true;
 try {
-console.log('📤 إرسال الرسالة:', userText);
-const ragResponse = await sendToRAG(userText, currentImageBase64);
-console.log('📥 استلام الرد:', ragResponse);
-if (thinkingMsg.parentNode) {
-chat.removeChild(thinkingMsg);
-}
+const ragResponse = await sendToRAG(userText);
+if (thinkingMsg.parentNode) chat.removeChild(thinkingMsg);
 const botMsg = document.createElement("div");
 botMsg.className = "bot-response";
 let formattedAnswer = ragResponse.answer || 'لم يتم استلام إجابة من الخادم';
 if (ragResponse.sources && ragResponse.sources.length > 0) {
 formattedAnswer += '\n📚 **المصادر:**\n';
-ragResponse.sources.forEach((source, index) => {
-formattedAnswer += `${index + 1}. ${source}\n`;
-});
+ragResponse.sources.forEach((source, index) => { formattedAnswer += `${index + 1}. ${source}\n`; });
 }
 if (ragResponse.confidence && ragResponse.confidence < 0.5) {
 formattedAnswer += '\n⚠️ *ملاحظة: قد تكون هذه الإجابة غير دقيقة*';
 }
-// استخدام تأثير الكتابة التدريجية
-typeText(botMsg, formattedAnswer);
+botMsg.textContent = formattedAnswer;
 chat.appendChild(botMsg);
 chat.scrollTop = chat.scrollHeight;
 saveCurrentChat();
-// إعادة تعيين الصورة بعد الإرسال
-currentImageBase64 = null;
-imageUpload.value = '';
 } catch (error) {
-console.error('❌ خطأ في sendMessage:', error);
-if (thinkingMsg.parentNode) {
-chat.removeChild(thinkingMsg);
-}
+if (thinkingMsg.parentNode) chat.removeChild(thinkingMsg);
 const errorMsg = document.createElement("div");
 errorMsg.className = "bot-response";
 errorMsg.textContent = '❌ عذراً، حدث خطأ في الاتصال بالخادم. حاول مرة أخرى.';
 chat.appendChild(errorMsg);
 chat.scrollTop = chat.scrollHeight;
-// إعادة تعيين الصورة بعد الخطأ
-currentImageBase64 = null;
-imageUpload.value = '';
 }
 isThinking = false;
 }
-// ================================ UI HELPERS ================================ //
 function adjustHeight(){msg.style.height='auto';const h=window.innerWidth<=500?270:360;msg.style.height=Math.min(msg.scrollHeight,h)+'px';msg.style.overflowY=msg.scrollHeight>h?'auto':'hidden';}
-function updateSendBtn(){sendBtn.classList.toggle('active',!!(msg.value.trim()||currentImageBase64));}
-// ================================ CHAT HISTORY FUNCTIONS ================================ //
+function updateSendBtn(){sendBtn.classList.toggle('active',!!(msg.value.trim()||imageUpload.files.length>0));}
+function closeActionMenu(){actionMenu.classList.remove('open');actionBtn.classList.remove('active');}
 function loadChatHistory(filter = '') {
 const chats = JSON.parse(localStorage.getItem('kalmeronChats') || '[]');
 chatHistoryList.innerHTML = '';
-const personalProfileSection = createPersonalProfileSection();
-chatHistoryList.appendChild(personalProfileSection);
+chatHistoryList.appendChild(createPersonalProfileSection());
+chatHistoryList.appendChild(createTodoListSection());
 if (chats.length === 0) {
 chatHistoryList.innerHTML += '<p style="color:rgba(0,255,255,0.6);margin:20px 0;">لا توجد محادثات سابقة</p>';
 return;
@@ -1744,18 +1498,14 @@ const favoritesHeader = document.createElement('div');
 favoritesHeader.className = 'favorites-header';
 favoritesHeader.textContent = 'المفضلة';
 chatHistoryList.appendChild(favoritesHeader);
-favorites.forEach(chat => {
-addChatItem(chat);
-});
+favorites.forEach(chat => addChatItem(chat));
 }
 if (regularChats.length > 0) {
 const chatsHeader = document.createElement('div');
 chatsHeader.className = 'chats-header';
 chatsHeader.textContent = 'المحادثات الأخرى';
 chatHistoryList.appendChild(chatsHeader);
-regularChats.forEach(chat => {
-addChatItem(chat);
-});
+regularChats.forEach(chat => addChatItem(chat));
 }
 }
 function addChatItem(chat) {
@@ -1766,9 +1516,7 @@ const date = new Date(chat.timestamp);
 const formattedDate = date.toLocaleDateString('ar-EG') + ' ' + date.toLocaleTimeString('ar-EG', {hour:'2-digit',minute:'2-digit'});
 chatItem.innerHTML = `
 <div class="chat-actions">
-<button class="chat-action-btn favorite" data-chat-id="${chat.id}">
-${chat.favorited ? '★' : '☆'}
-</button>
+<button class="chat-action-btn favorite" data-chat-id="${chat.id}">${chat.favorited ? '★' : '☆'}</button>
 <button class="chat-action-btn edit" data-chat-id="${chat.id}">✏️</button>
 <button class="chat-action-btn delete" data-chat-id="${chat.id}">×</button>
 </div>
@@ -1781,21 +1529,9 @@ loadChat(chat.id);
 chatHistoryModal.style.display = 'none';
 }
 });
-const favoriteBtn = chatItem.querySelector('.chat-action-btn.favorite');
-const editBtn = chatItem.querySelector('.chat-action-btn.edit');
-const deleteBtn = chatItem.querySelector('.chat-action-btn.delete');
-favoriteBtn.addEventListener('click', (e) => {
-e.stopPropagation();
-toggleFavoriteChat(chat.id);
-});
-editBtn.addEventListener('click', (e) => {
-e.stopPropagation();
-editChatTitle(chat.id);
-});
-deleteBtn.addEventListener('click', (e) => {
-e.stopPropagation();
-deleteChat(chat.id);
-});
+chatItem.querySelector('.chat-action-btn.favorite').addEventListener('click', (e) => { e.stopPropagation(); toggleFavoriteChat(chat.id); });
+chatItem.querySelector('.chat-action-btn.edit').addEventListener('click', (e) => { e.stopPropagation(); editChatTitle(chat.id); });
+chatItem.querySelector('.chat-action-btn.delete').addEventListener('click', (e) => { e.stopPropagation(); deleteChat(chat.id); });
 chatHistoryList.appendChild(chatItem);
 }
 function editChatTitle(chatId) {
@@ -1820,13 +1556,7 @@ updateBodyClass();
 chatToLoad.messages.forEach(msg => {
 const msgDiv = document.createElement('div');
 msgDiv.className = `${msg.sender === 'user' ? 'msg user' : 'bot-response'}`;
-// إعادة تطبيق نفس المنطق عند تحميل المحادثة
-if (msg.content.includes('data:image')) {
-// نفترض أن الرسالة تحتوي على صورة فقط
 msgDiv.textContent = msg.content;
-} else {
-msgDiv.textContent = msg.content;
-}
 chat.appendChild(msgDiv);
 });
 currentChatId = chatId;
@@ -1871,102 +1601,44 @@ return true;
 }
 return false;
 }
-// ================================ MODE SELECTION DIALOG ================================ //
 function showModeSelectionDialog() {
 const modeDialog = document.createElement('div');
 modeDialog.id = 'modeSelectionDialog';
-modeDialog.style.cssText = `
-position: fixed;
-top: 0;
-left: 0;
-width: 100%;
-height: 100%;
-background: rgba(0, 0, 0, 0.85);
-display: flex;
-justify-content: center;
-align-items: center;
-z-index: 3000;
-backdrop-filter: blur(10px);
-`;
+modeDialog.style.cssText = `position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:flex;justify-content:center;align-items:center;z-index:3000;backdrop-filter:blur(10px);`;
 const dialogCard = document.createElement('div');
-dialogCard.style.cssText = `
-background: rgba(10, 5, 20, 0.95);
-border: 1px solid var(--border-color);
-border-radius: 25px;
-padding: 30px;
-width: 90%;
-max-width: 450px;
-direction: rtl;
-text-align: center;
-`;
+dialogCard.style.cssText = `background:rgba(10,5,20,0.95);border:1px solid var(--border-color);border-radius:25px;padding:30px;width:90%;max-width:450px;direction:rtl;text-align:center;`;
 const title = document.createElement('h2');
 title.textContent = 'اختر وضع التشغيل';
 title.style.cssText = 'margin-top:0;margin-bottom:25px;color:var(--text-color);font-size:24px;';
 const modeOptionsDiv = document.createElement('div');
 modeOptionsDiv.className = 'mode-options';
 modeOptionsDiv.style.cssText = 'margin:20px 0;display:flex;gap:15px;justify-content:center;flex-wrap:wrap;';
-const generalOption = document.createElement('div');
-generalOption.className = 'mode-option';
-generalOption.dataset.mode = 'general';
-generalOption.innerHTML = `<h4><span class="mode-icon">🟣</span> Violet Shadow</h4>`;
-generalOption.style.cursor = 'pointer';
-const scienceOption = document.createElement('div');
-scienceOption.className = 'mode-option';
-scienceOption.dataset.mode = 'science';
-scienceOption.innerHTML = `<h4><span class="mode-icon">🔵</span> Ocean Blue</h4>`;
-scienceOption.style.cursor = 'pointer';
-const purpleOption = document.createElement('div');
-purpleOption.className = 'mode-option';
-purpleOption.dataset.mode = 'purple';
-purpleOption.innerHTML = `<h4><span class="mode-icon">💜</span> Royal Purple</h4>`;
-purpleOption.style.cursor = 'pointer';
-if (selectedMode === 'general') {
-generalOption.classList.add('selected');
-} else if (selectedMode === 'science') {
-scienceOption.classList.add('selected');
-} else {
-purpleOption.classList.add('selected');
-}
-modeOptionsDiv.appendChild(generalOption);
-modeOptionsDiv.appendChild(scienceOption);
-modeOptionsDiv.appendChild(purpleOption);
-generalOption.addEventListener('click', () => {
-modeOptionsDiv.querySelectorAll('.mode-option').forEach(opt => opt.classList.remove('selected'));
-generalOption.classList.add('selected');
-selectedMode = 'general';
+const modes = [
+{mode:'general',icon:'🟣',name:'Violet Shadow'},
+{mode:'science',icon:'🔵',name:'Ocean Blue'},
+{mode:'purple',icon:'💜',name:'Royal Purple'},
+{mode:'facebook',icon:'🤍',name:'Facebook White'}
+];
+modes.forEach(m => {
+const opt = document.createElement('div');
+opt.className = 'mode-option'+(selectedMode===m.mode?' selected':'');
+opt.dataset.mode = m.mode;
+opt.innerHTML = `<h4><span class="mode-icon">${m.icon}</span> ${m.name}</h4>`;
+opt.style.cursor = 'pointer';
+opt.addEventListener('click', () => {
+modeOptionsDiv.querySelectorAll('.mode-option').forEach(o => o.classList.remove('selected'));
+opt.classList.add('selected');
+selectedMode = m.mode;
 });
-scienceOption.addEventListener('click', () => {
-modeOptionsDiv.querySelectorAll('.mode-option').forEach(opt => opt.classList.remove('selected'));
-scienceOption.classList.add('selected');
-selectedMode = 'science';
-});
-purpleOption.addEventListener('click', () => {
-modeOptionsDiv.querySelectorAll('.mode-option').forEach(opt => opt.classList.remove('selected'));
-purpleOption.classList.add('selected');
-selectedMode = 'purple';
+modeOptionsDiv.appendChild(opt);
 });
 const confirmBtn = document.createElement('button');
 confirmBtn.textContent = 'تأكيد';
-confirmBtn.style.cssText = `
-padding: 12px 25px;
-border-radius: 20px;
-border: none;
-font-size: 16px;
-font-weight: bold;
-cursor: pointer;
-transition: all 0.3s;
-font-family: "Cairo", sans-serif;
-background: rgba(0, 150, 255, 0.25);
-color: #4fc3f7;
-border: 1px solid rgba(0, 150, 255, 0.7);
-margin-top: 20px;
-`;
+confirmBtn.style.cssText = `padding:12px 25px;border-radius:20px;border:none;font-size:16px;font-weight:bold;cursor:pointer;transition:all 0.3s;font-family:"Cairo",sans-serif;background:rgba(0,150,255,0.25);color:#4fc3f7;border:1px solid rgba(0,150,255,0.7);margin-top:20px;`;
 confirmBtn.addEventListener('click', () => {
 updateBodyClass();
 const user = checkUser();
-if (user) {
-saveUser(user.name, user.birthDate, selectedMode, snowflakesDisabledModes);
-}
+if (user) saveUser(user.name, user.birthDate, selectedMode, snowflakesDisabledModes);
 chat.innerHTML = '';
 loadWelcome(user);
 document.body.removeChild(modeDialog);
@@ -1977,59 +1649,40 @@ dialogCard.appendChild(confirmBtn);
 modeDialog.appendChild(dialogCard);
 document.body.appendChild(modeDialog);
 }
-// ================================ INITIAL SETUP ================================ //
 function handleInitialSetup() {
 const userData = checkUser();
 if (userData) {
 selectedMode = userData.mode || 'general';
 snowflakesDisabledModes = userData.snowflakesDisabledModes || [];
 updateBodyClass();
-if (!snowflakesDisabledModes.includes(selectedMode)) {
-createSnowflakes();
-}
+if (!snowflakesDisabledModes.includes(selectedMode)) createSnowflakes();
 initialSetupCard.style.display = 'none';
 setTimeout(() => {
-if (!restoreActiveSession()) {
-loadWelcome(userData);
-}
+if (!restoreActiveSession()) loadWelcome(userData);
 }, 300);
 return;
 }
-setTimeout(() => {
-initialSetupCard.classList.add('visible');
-}, 300);
-const minDate = new Date();
-minDate.setFullYear(minDate.getFullYear() - 120);
+setTimeout(() => initialSetupCard.classList.add('visible'), 300);
+const minDate = new Date(); minDate.setFullYear(minDate.getFullYear() - 120);
 initialBirthDate.min = minDate.toISOString().split('T')[0];
-const maxDate = new Date();
-initialBirthDate.max = maxDate.toISOString().split('T')[0];
+const maxDate = new Date(); initialBirthDate.max = maxDate.toISOString().split('T')[0];
 continueInitialBtn.addEventListener('click', () => {
 const name = initialName.value.trim();
 const birthDate = initialBirthDate.value;
-if (!name || !birthDate) {
-alert('يرجى ملء جميع الحقول');
-return;
-}
+if (!name || !birthDate) { alert('يرجى ملء جميع الحقول'); return; }
 const birthDateObj = new Date(birthDate);
 const today = new Date();
-const minBirthDate = new Date();
-minBirthDate.setFullYear(today.getFullYear() - 120);
-if (birthDateObj > today || birthDateObj < minBirthDate) {
-alert('يرجى إدخال تاريخ ميلاد صحيح');
-return;
-}
+const minBirthDate = new Date(); minBirthDate.setFullYear(today.getFullYear() - 120);
+if (birthDateObj > today || birthDateObj < minBirthDate) { alert('يرجى إدخال تاريخ ميلاد صحيح'); return; }
 saveUser(name, birthDate, selectedMode, snowflakesDisabledModes);
 initialSetupCard.classList.remove('visible');
 setTimeout(() => {
 initialSetupCard.style.display = 'none';
-if (!restoreActiveSession()) {
-loadWelcome({name: name});
-}
+if (!restoreActiveSession()) loadWelcome({name: name});
 createSnowflakes();
 }, 300);
 });
 }
-// ================================ EVENT LISTENERS ================================ //
 modalSaveBtn.addEventListener('click',()=>{
 const n=editName.value.trim(),b=editBirthDate.value;
 if(!n||!b)return;
@@ -2049,24 +1702,17 @@ logoutBtn.addEventListener('click', () => { if(confirm('هل أنت متأكد �
 changeModeBtn.addEventListener('click', () => { hideProfile(); showModeSelectionDialog(); });
 snowflakesBtn.addEventListener('click', toggleSnowflakes);
 searchInput.addEventListener('input', (e) => { loadChatHistory(e.target.value); });
+actionBtn.addEventListener('click',()=>{if(isThinking)return;actionMenu.classList.toggle('open');actionBtn.classList.toggle('active');});
+imageUploadBtn.addEventListener('click',()=>{closeActionMenu();imageUpload.click();});
 imageUpload.addEventListener('change',updateSendBtn);
-sendBtn.addEventListener('click',()=>{if((msg.value.trim()||currentImageBase64)&&!isThinking)sendMessage();});
-msg.addEventListener("keydown",(e)=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();if((msg.value.trim()||currentImageBase64)&&!isThinking)sendMessage();}});
+sendBtn.addEventListener('click',()=>{if(msg.value.trim()&&!isThinking)sendMessage();});
+msg.addEventListener("keydown",(e)=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();if(msg.value.trim()&&!isThinking)sendMessage();}});
 msg.addEventListener("input",()=>{adjustHeight();updateSendBtn();});
+document.addEventListener('click',(e)=>{if(!actionBtn.contains(e.target)&&!actionMenu.contains(e.target))closeActionMenu();});
 window.addEventListener('resize',adjustHeight);
 document.addEventListener('keydown',(e)=>{if(profileModal.style.display==='flex'&&e.key==='Enter'){e.preventDefault();modalSaveBtn.click();}});
-// ================================ AUTO-SAVE CHATS ================================ //
-setInterval(() => {
-if (chat.children.length > 0) {
-saveCurrentChat();
-}
-}, 30000);
-// ================================ INITIALIZE APP ================================ //
-window.onload = () => {
-handleInitialSetup();
-console.log('🚀 Kalmeron Chat Loaded!');
-console.log('🔗 Production Webhook URL:', N8N_WEBHOOK_URL);
-};
+setInterval(() => { if (chat.children.length > 0) saveCurrentChat(); }, 30000);
+window.onload = () => { handleInitialSetup(); };
 </script>
 </body>
 </html>
