@@ -520,6 +520,39 @@ color: #ccc;
 font-size: 14px;
 }
 
+.books-section {
+background: rgba(0, 255, 255, 0.15);
+border: 1px solid var(--border-color);
+border-radius: 15px;
+padding: 15px;
+margin: 10px 0;
+cursor: pointer;
+transition: all 0.3s ease;
+position: relative;
+}
+.books-section:hover {
+background: rgba(0, 255, 255, 0.25);
+transform: translateY(-2px);
+border-color: rgba(0, 255, 255, 0.6);
+}
+.books-section h3 {
+margin: 0 0 8px 0;
+color: var(--text-color);
+font-size: 18px;
+display: flex;
+align-items: center;
+gap: 10px;
+}
+.books-section h3::before {
+content: "📚";
+font-size: 20px;
+}
+.books-section p {
+margin: 0;
+color: #ccc;
+font-size: 14px;
+}
+
 .favorites-header {
 background: rgba(0, 255, 255, 0.15);
 border: 1px solid var(--border-color);
@@ -1048,8 +1081,8 @@ textarea{font-size:16px;max-height:300px}
 .user,.bot-response{max-width:85%}
 .profile-card,.chat-history-card,.initial-setup-card{padding:20px;width:95%}
 .form-group input,.initial-form-group input{font-size:15px;padding:10px}
-.chat-history-item,.personal-profile-section,.todo-list-section{padding:12px}
-.personal-profile-section h3,.todo-list-section h3{font-size:16px}
+.chat-history-item,.personal-profile-section,.todo-list-section,.books-section{padding:12px}
+.personal-profile-section h3,.todo-list-section h3,.books-section h3{font-size:16px}
 .favorites-header,.chats-header{font-size:14px;padding:8px 12px}
 header{padding:12px 15px;}
 #newChatBtn{width:32px;height:32px;font-size:20px;}
@@ -1069,8 +1102,8 @@ textarea{font-size:16px;max-height:270px}
 .btn,.initial-btn{padding:10px 20px;font-size:15px}
 .chat-action-btn{width:24px;height:24px;font-size:12px}
 .close-modal{width:26px;height:26px;font-size:16px}
-.personal-profile-section,.todo-list-section{padding:10px}
-.personal-profile-section h3,.todo-list-section h3{font-size:15px}
+.personal-profile-section,.todo-list-section,.books-section{padding:10px}
+.personal-profile-section h3,.todo-list-section h3,.books-section h3{font-size:15px}
 .favorites-header,.chats-header{font-size:13px;padding:6px 10px}
 .personal-profile-section .edit-icon{width:20px;height:20px;font-size:12px}
 #newChatBtn{width:28px;height:28px;font-size:18px;}
@@ -1218,7 +1251,6 @@ let selectedMode = 'general';
 let snowflakesEnabled = true;
 let snowflakesDisabledModes = [];
 const SESSION_KEY = 'kalmeron_active_chat_session';
-
 function createSnowflakes(){
 if (snowflakesDisabledModes.includes(selectedMode)) return;
 const c=document.body;
@@ -1284,17 +1316,24 @@ profileSection.innerHTML = `<h3>${displayName}</h3><p>اضغط لتعديل مع
 profileSection.addEventListener('click', () => showProfile());
 return profileSection;
 }
-
 function createTodoListSection() {
 const todoSection = document.createElement('div');
 todoSection.className = 'todo-list-section';
 todoSection.innerHTML = `<h3>قائمة المهام (To-Do List)</h3><p>إدارة مهامك اليومية</p>`;
 todoSection.addEventListener('click', () => {
-    window.location.href = 'todo-list.html';
+window.location.href = 'todo-list.html';
 });
 return todoSection;
 }
-
+function createBooksSection() {
+const booksSection = document.createElement('div');
+booksSection.className = 'books-section';
+booksSection.innerHTML = `<h3>الكتب</h3><p>تصفح مكتبتك الرقمية</p>`;
+booksSection.addEventListener('click', () => {
+window.location.href = 'books.html';
+});
+return booksSection;
+}
 function showProfile(){
 const u=checkUser();
 if(u){
@@ -1446,13 +1485,23 @@ if (thinkingMsg.parentNode) chat.removeChild(thinkingMsg);
 const botMsg = document.createElement("div");
 botMsg.className = "bot-response";
 let formattedAnswer = ragResponse.answer || 'لم يتم استلام إجابة من الخادم';
+
 if (ragResponse.sources && ragResponse.sources.length > 0) {
-formattedAnswer += '\n📚 **المصادر:**\n';
-ragResponse.sources.forEach((source, index) => { formattedAnswer += `${index + 1}. ${source}\n`; });
+formattedAnswer += `
+📚 **المصادر:**
+`;
+
+ragResponse.sources.forEach((source, index) => {
+formattedAnswer += `${index + 1}. ${source}\n`;
+});
 }
+
 if (ragResponse.confidence && ragResponse.confidence < 0.5) {
-formattedAnswer += '\n⚠️ *ملاحظة: قد تكون هذه الإجابة غير دقيقة*';
+formattedAnswer += `
+⚠️ *ملاحظة: قد تكون هذه الإجابة غير دقيقة*
+`;
 }
+
 botMsg.textContent = formattedAnswer;
 chat.appendChild(botMsg);
 chat.scrollTop = chat.scrollHeight;
@@ -1475,6 +1524,7 @@ const chats = JSON.parse(localStorage.getItem('kalmeronChats') || '[]');
 chatHistoryList.innerHTML = '';
 chatHistoryList.appendChild(createPersonalProfileSection());
 chatHistoryList.appendChild(createTodoListSection());
+chatHistoryList.appendChild(createBooksSection());
 if (chats.length === 0) {
 chatHistoryList.innerHTML += '<p style="color:rgba(0,255,255,0.6);margin:20px 0;">لا توجد محادثات سابقة</p>';
 return;
