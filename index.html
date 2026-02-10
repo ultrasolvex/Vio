@@ -3,202 +3,377 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>اختيار الصف الدراسي</title>
+<title>Kalmeron AI</title>
+
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI,Tahoma;
 }
 
-body {
-  background: linear-gradient(135deg, #0a0a2a, #0500aa);
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-  direction: rtl;
+body{
+background:linear-gradient(135deg,#050020,#0600cc);
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+direction:rtl;
+overflow-x:hidden;
+padding:20px;
 }
 
-.container {
+/* شاشة اللوجو */
+#splash{
+position:fixed;
+inset:0;
+display:flex;
+justify-content:center;
+align-items:center;
+background:linear-gradient(135deg,#040020,#0500aa);
+z-index:999;
+animation:fadeOut 1s ease forwards;
+animation-delay:3s;
+}
+
+.logo{
+width:85vw;              /* كبير على الموبايل */
+max-width:520px;        /* حد أقصى على الكمبيوتر */
+min-width:260px;        /* ما يصغرش زيادة */
+height:auto;
+border-radius:34px;
+box-shadow:
+0 0 35px rgba(0,150,255,.75),
+0 0 90px rgba(0,120,255,.55);
+animation:zoomIn 2s ease forwards;
+}
+
+/* الصفحة الأساسية */
+.container{
+opacity:0;
+animation:showContent 1.2s ease forwards;
+animation-delay:3.2s;
+width:100%;
+max-width:500px;
+text-align:center;
+padding:20px;
+}
+
+.title{
+color:white;
+font-size:26px;
+margin-bottom:35px;
+font-weight:600;
+text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.cards-grid{
+display:flex;
+flex-direction:column;
+gap:25px;
+margin-bottom: 40px;
+}
+
+.card{
+background:rgba(255,255,255,.09);
+backdrop-filter:blur(14px);
+border-radius:26px;
+padding:32px;
+cursor:pointer;
+transition:.35s ease;
+border:1px solid rgba(255,255,255,.18);
+text-decoration:none;
+color:white;
+box-shadow:0 8px 22px rgba(0,0,0,.35);
+position: relative;
+overflow: hidden;
+}
+
+.card:hover{
+transform:translateY(-8px) scale(1.04);
+background:rgba(255,255,255,.17);
+box-shadow:0 14px 36px rgba(0,0,0,.45);
+}
+
+.card-title{
+font-size:22px;
+font-weight:600;
+}
+
+/* قسم الفريق تحت الصف الثاني */
+.team-section {
+  margin-top: 20px;
+  padding-top: 30px;
+  border-top: 2px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+}
+
+/* الخط الأصفر اللامع */
+.team-section::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  right: 0;
   width: 100%;
-  max-width: 400px;
-  text-align: center;
+  height: 3px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    #FFD700 10%, 
+    #FFEC00 30%, 
+    #FFD700 50%, 
+    #FFEC00 70%, 
+    #FFD700 90%, 
+    transparent 100%);
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+  animation: shine 3s infinite linear;
 }
 
-.title {
-  color: #fff;
-  font-size: 26px;
-  margin-bottom: 35px;
-  text-shadow: 0 2px 8px rgba(255,255,255,0.2);
-  font-weight: 600;
+@keyframes shine {
+  0% { background-position: -200px 0; }
+  100% { background-position: calc(100% + 200px) 0; }
 }
 
-.cards-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
-  margin-bottom: 25px;
-}
-
-.card {
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(12px);
-  border-radius: 18px;
-  padding: 30px 25px;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  text-decoration: none;
-  color: white;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 120px;
-}
-
-.card:hover {
-  transform: translateY(-6px);
-  background: rgba(255, 255, 255, 0.15);
-  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.25);
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
-.card-title {
+/* العنوان Honor Board */
+.honor-board-title {
+  color: #FFF;
   font-size: 22px;
-  font-weight: 600;
-  line-height: 1.3;
+  font-weight: 700;
+  margin-bottom: 25px;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 
-.loading {
-  color: white;
+/* كارد الفريق */
+.team-card {
+  background: linear-gradient(135deg, 
+    rgba(0, 80, 255, 0.9) 0%, 
+    rgba(0, 40, 120, 0.9) 100%);
+  backdrop-filter: blur(10px);
+  border-radius: 22px;
+  padding: 25px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 
+    0 10px 30px rgba(0, 60, 200, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.team-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 
+    0 15px 40px rgba(0, 80, 255, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* تأثير اللمعان على الحواف */
+.team-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, 
+    #00FFFF, #0080FF, #00FFFF);
+  border-radius: 22px 22px 0 0;
+}
+
+/* تدرج الخلفية */
+.team-content {
+  background: linear-gradient(to bottom, 
+    rgba(0, 40, 120, 0.7) 0%, 
+    rgba(0, 0, 30, 0.9) 100%);
+  border-radius: 16px;
+  padding: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+/* النص الفخم */
+.team-member {
+  margin-bottom: 20px;
+}
+
+.member-name {
+  color: #FFF;
   font-size: 20px;
-  opacity: 0.8;
-  padding: 40px 20px;
+  font-weight: 800;
+  margin-bottom: 5px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  letter-spacing: 0.5px;
 }
 
-@media (max-width: 500px) {
-  .container { max-width: 350px; }
-  .title { font-size: 24px; margin-bottom: 30px; }
-  .card { padding: 25px 20px; height: 110px; }
-  .card-title { font-size: 20px; }
-  .loading { font-size: 18px; }
+.member-title {
+  color: #FFD700;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
-@media (max-width: 380px) {
-  .title { font-size: 22px; }
-  .card { padding: 20px 15px; height: 100px; }
-  .card-title { font-size: 18px; }
+.member-quote {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 15px;
+  line-height: 1.6;
+  font-style: italic;
+  padding: 12px 15px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  border-right: 3px solid #FFD700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* الأنيميشن */
+@keyframes zoomIn{
+from{transform:scale(.35);opacity:0;}
+to{transform:scale(1);opacity:1;}
+}
+
+@keyframes fadeOut{
+to{opacity:0;visibility:hidden;}
+}
+
+@keyframes showContent{
+to{opacity:1;}
+}
+
+/* تأثيرات النص الواثق */
+.confident-text {
+  position: relative;
+  display: inline-block;
+  font-weight: 800;
+  color: #FFFFFF;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.confident-text::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  right: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #FFD700, transparent);
+}
+
+/* شاشات كبيرة جداً */
+@media (min-width:1200px){
+.logo{
+max-width:480px; /* يمنع التضخم المبالغ فيه */
+}
+}
+
+/* موبايل صغير */
+@media(max-width:400px){
+.logo{
+width:90vw;
+min-width:220px;
+}
+
+.team-card {
+  padding: 20px;
+}
+
+.member-name {
+  font-size: 18px;
+}
+
+.member-title {
+  font-size: 15px;
+}
+
+.member-quote {
+  font-size: 14px;
+}
+
+.honor-board-title {
+  font-size: 20px;
+}
 }
 </style>
 </head>
+
 <body>
-<div class="container">  
-  <div id="content">
-    <h1 class="title">اختر صفك الدراسي</h1>
-    <div class="cards-grid">
-      <a href="grade1.html" class="card" id="grade1">
-        <div class="card-title">الصف الأول الثانوي</div>
-      </a>
-      <a href="grade2.html" class="card" id="grade2">
-        <div class="card-title">الصف الثاني الثانوي</div>
-      </a>
+
+<!-- شاشة اللوجو -->
+<div id="splash">
+<img src="Kalmeron.png" class="logo" alt="Kalmeron Logo">
+</div>
+
+<!-- المحتوى -->
+<div class="container">
+
+<h1 class="title">اختر صفك الدراسي</h1>
+
+<div class="cards-grid">
+
+<a href="grade1.html" class="card">
+<div class="card-title">الصف الأول الثانوي</div>
+</a>
+
+<a href="grade2.html" class="card">
+<div class="card-title">الصف الثاني الثانوي</div>
+</a>
+
+</div>
+
+<!-- قسم الفريق الجديد -->
+<div class="team-section">
+  <h2 class="honor-board-title">Honor Board</h2>
+  <div class="team-card">
+    <div class="team-content">
+      <div class="team-member">
+        <div class="member-name">CEO & Co-Founder</div>
+        <div class="member-quote">
+          <span class="confident-text">Mohammad Rabie</span>
+        </div>
+      </div>
+      
+      <div class="team-member">
+        <div class="member-name">CTO & Founder</div>
+        <div class="member-quote">
+          <span class="confident-text">Hisham Kamal</span>
+        </div>
+      </div>
+      
+      <div class="team-member">
+        <div class="member-name">Investor</div>
+        <div class="member-quote">
+          <span class="confident-text">Ahmed Waleed</span>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
+</div>
+
 <script>
-// منع تخزين الصفحة في الكاش عند الرجوع
-if (window.history.replaceState) {
-  window.history.replaceState(null, null, window.location.href);
-}
-
-// إعادة تعيين المحتوى عند تحميل الصفحة
-window.onpageshow = function(event) {
-  // إذا كانت الصفحة تم تحميلها من الكاش
-  if (event.persisted) {
-    location.reload(); // إعادة تحميل الصفحة
-  }
-};
-
-// التعامل مع النقر على البطاقات
+// Handle image loading errors gracefully
 document.addEventListener('DOMContentLoaded', function() {
-  const grade1 = document.getElementById('grade1');
-  const grade2 = document.getElementById('grade2');
-  
-  function handleCardClick(event, page) {
-    event.preventDefault();
+    const logoImg = document.querySelector('.logo');
+    const splash = document.getElementById('splash');
     
-    // إخفاء المحتوى الحالي
-    document.getElementById('content').innerHTML = '<div class="loading">جاري التوجيه...</div>';
+    logoImg.onerror = function() {
+        // If image fails to load, hide splash immediately
+        splash.style.animation = 'fadeOut 0.3s ease forwards';
+    };
     
-    // تأخير قصير لتحسين تجربة المستخدم
+    // Ensure proper cleanup after animation
     setTimeout(() => {
-      window.location.href = page;
-    }, 300);
-  }
-  
-  grade1.addEventListener('click', function(event) {
-    handleCardClick(event, 'grade1.html');
-  });
-  
-  grade2.addEventListener('click', function(event) {
-    handleCardClick(event, 'grade2.html');
-  });
-});
-
-// استعادة الحالة الأصلية عند العودة للصفحة
-window.onbeforeunload = function() {
-  // لا شيء هنا، فقط لتأكيد أن الصفحة ستُعاد تحميلها
-};
-
-// حل بديل: إعادة تعيين الصفحة عند الرجوع
-window.addEventListener('pageshow', function(event) {
-  const content = document.getElementById('content');
-  // إذا كان هناك محتوى "جاري التوجيه"، أعد تعيينه
-  if (content.innerHTML.includes('جاري التوجيه')) {
-    content.innerHTML = `
-      <h1 class="title">اختر صفك الدراسي</h1>
-      <div class="cards-grid">
-        <a href="grade1.html" class="card" id="grade1">
-          <div class="card-title">الصف الأول الثانوي</div>
-        </a>
-        <a href="grade2.html" class="card" id="grade2">
-          <div class="card-title">الصف الثاني الثانوي</div>
-        </a>
-      </div>
-    `;
-    
-    // إعادة إرفاق الأحداث
-    setTimeout(() => {
-      const grade1 = document.getElementById('grade1');
-      const grade2 = document.getElementById('grade2');
-      
-      if (grade1) {
-        grade1.addEventListener('click', function(event) {
-          event.preventDefault();
-          content.innerHTML = '<div class="loading">جاري التوجيه...</div>';
-          setTimeout(() => {
-            window.location.href = 'grade1.html';
-          }, 300);
-        });
-      }
-      
-      if (grade2) {
-        grade2.addEventListener('click', function(event) {
-          event.preventDefault();
-          content.innerHTML = '<div class="loading">جاري التوجيه...</div>';
-          setTimeout(() => {
-            window.location.href = 'grade2.html';
-          }, 300);
-        });
-      }
-    }, 100);
-  }
+        if (splash.style.opacity === '0') {
+            splash.style.display = 'none';
+        }
+    }, 4200);
 });
 </script>
+
 </body>
 </html>
+
