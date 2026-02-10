@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Hub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+    body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-gradient(180deg,#8a2be2 0%,#4b0082 50%,#000000 100%);color:white;min-height:100vh;padding:20px;padding-bottom:100px;}
+    .container{max-width:1200px;margin:0 auto;}
+    header{text-align:center;padding:30px 0 20px;}
+    h1{font-family:'Orbitron',sans-serif;font-weight:900;font-size:clamp(2.4rem,8vw,4.2rem);color:aqua;letter-spacing:3px;margin:0;line-height:1.1;}
+    .subtitle{color:#e6d5ff;margin-top:10px;font-size:1.2rem;}
+    .ad-placeholder{background:rgba(255,255,255,0.05);border:2px dashed rgba(255,255,255,0.2);border-radius:10px;padding:80px 20px;text-align:center;margin:0 0 20px;color:#aaa;}
+    .search-bar{background:rgba(255,255,255,0.1);border-radius:25px;padding:15px 20px;margin-bottom:30px;cursor:pointer;text-align:center;font-size:1.2rem;transition:all 0.3s;display:flex;align-items:center;justify-content:center;}
+    .search-bar:hover{background:rgba(255,255,255,0.2);transform:translateY(-2px);}
+    .search-bar i{margin-left:10px;}
+    .books-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:25px;}
+    .book-card{background:rgba(255,255,255,0.08);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:16px;padding:20px;border:1px solid rgba(255,255,255,0.12);transition:all 0.35s ease;width:100%;max-width:300px;}
+    .book-card:hover{transform:translateY(-8px);box-shadow:0 12px 30px rgba(0,212,255,0.18);border-color:rgba(0,255,255,0.4);}
+    .book-title{font-size:1.35rem;margin-bottom:8px;color:#e6d5ff;font-weight:600;}
+    .book-subject{color:#bbb;margin-bottom:16px;font-size:0.95rem;}
+    .download-btn{width:100%;padding:13px;background:linear-gradient(90deg,#8a2be2,#4b0082);border:none;border-radius:10px;color:white;font-size:1.05rem;cursor:pointer;margin-top:12px;transition:all 0.3s;display:flex;align-items:center;justify-content:center;gap:8px;}
+    .download-btn:hover{background:linear-gradient(90deg,#9b42f5,#5c00a3);transform:translateY(-3px);box-shadow:0 8px 20px rgba(138,43,226,0.35);}
+    #back-button{position:absolute;top:12px;left:12px;z-index:100;display:none;}
+    #back-btn{background:transparent;border:none;font-size:1.9rem;color:aqua;cursor:pointer;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:all 0.3s;}
+    #back-btn:hover{background:rgba(0,255,255,0.12);transform:scale(1.12);}
+    #search-modal,#term-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:2000;justify-content:center;align-items:center;backdrop-filter:blur(6px);}
+    .modal-content{background:rgba(255,255,255,0.09);backdrop-filter:blur(12px);color:white;padding:32px;border-radius:16px;text-align:center;width:420px;max-width:92%;border:1px solid rgba(255,255,255,0.14);}
+    .modal-content.term{width:340px;padding:28px;background:rgba(50,20,70,0.75);border:1px solid rgba(100,200,255,0.25);}
+    .modal-content h3{margin-bottom:28px;color:aqua;font-size:1.6rem;}
+    select{width:100%;padding:12px;margin:12px 0;background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.2);color:white;border-radius:8px;font-size:1rem;}
+    .modal-btn{padding:13px 28px;margin:12px 10px;background:linear-gradient(90deg,#8a2be2,#4b0082);border:none;border-radius:12px;color:white;font-size:1.1rem;cursor:pointer;min-width:130px;transition:all 0.3s;}
+    .modal-btn:hover{background:linear-gradient(90deg,#9b42f5,#5c00a3);transform:translateY(-3px);}
+    #bottom-dock{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);width:320px;height:70px;background:rgba(255,255,255,0.09);backdrop-filter:blur(12px);border-radius:24px;border:1px solid rgba(255,255,255,0.18);display:flex;justify-content:center;align-items:center;z-index:1000;box-shadow:0 8px 25px rgba(0,0,0,0.35);}
+    .dock-label{font-size:1.25rem;font-weight:700;letter-spacing:1.8px;color:#00ffff;cursor:pointer;transition:all 0.35s;user-select:none;padding:0 20px;}
+    .dock-label:hover{transform:scale(1.1);text-shadow:0 0 18px #00ffff;}
+    @media (max-width:768px){
+      h1{font-size:clamp(2.2rem,9vw,3.4rem);}
+      .book-card{max-width:none;}
+      .modal-content{width:90%;padding:24px;}
+      #back-button{top:8px;left:8px;}
+      #back-btn{width:40px;height:40px;font-size:1.7rem;}
+      #bottom-dock{width:90%;height:66px;bottom:16px;}
+      .dock-label{font-size:1.1rem;}
+    }
+    @media (max-width:480px){
+      #bottom-dock{height:60px;bottom:12px;}
+      .dock-label{font-size:1rem;}
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div id="back-button">
+      <button id="back-btn" onclick="goBack()" title="رجوع" aria-label="رجوع">←</button>
+    </div>
+
+    <header>
+      <h1>Kalmeron</h1>
+      <p class="subtitle">منصة الطالب الذكية للدراسة والتعاون</p>
+    </header>
+
+    <div class="ad-placeholder">
+      <p>🔼 هذا مكان مناسب للإعلانات 🔼</p>
+      <p style="font-size:0.9rem;margin-top:10px;">(مساحة لإعلانات جوجل أو إعلانات مباشرة)</p>
+    </div>
+
+    <div class="search-bar" onclick="showSearchModal()" role="button" tabindex="0">
+      <i class="material-icons">search</i>
+      ابحث عن كتب...
+    </div>
+
+    <div class="books-grid" id="books-grid"></div>
+  </div>
+
+  <!-- الدوك السفلي -->
+  <div id="bottom-dock">
+    <span class="dock-label" onclick="history.back()" role="button" tabindex="0" title="العودة إلى الصفحة السابقة">Kalmeron AI</span>
+  </div>
+
+  <!-- مودال البحث -->
+  <div id="search-modal">
+    <div class="modal-content">
+      <h3>البحث الذكي</h3>
+      <select id="search-subject">
+        <option value="">اختر نوع المادة</option>
+        <option value="رياضيات">رياضيات</option>
+        <option value="لغة عربية">لغة عربية</option>
+        <option value="لغة إنجليزية">لغة إنجليزية</option>
+        <option value="علوم">علوم</option>
+        <option value="دراسات اجتماعية">دراسات اجتماعية</option>
+        <option value="حاسب آلي">حاسب آلي</option>
+        <option value="فنون">فنون</option>
+        <option value="رياضة">رياضة</option>
+        <option value="لغة ثانية">لغة ثانية</option>
+        <option value="تربية دينية">تربية دينية</option>
+        <option value="قيم">قيم</option>
+        <option value="تربية وطنية">تربية وطنية</option>
+        <option value="مهارات">مهارات</option>
+        <option value="لغة أجنبية">لغة أجنبية</option>
+      </select>
+      <select id="search-grade">
+        <option value="">اختر الصف</option>
+        <option value="sec1">الأول الثانوي</option>
+        <option value="sec2">الثاني الثانوي</option>
+      </select>
+      <select id="search-term">
+        <option value="">اختر الفصل الدراسي</option>
+        <option value="1">الترم الأول</option>
+        <option value="2">الترم الثاني</option>
+      </select>
+      <button class="modal-btn" onclick="performSearch()">بحث</button>
+      <button class="modal-btn" onclick="closeSearchModal()">إغلاق</button>
+    </div>
+  </div>
+
+  <!-- مودال الترم -->
+  <div id="term-modal">
+    <div class="modal-content term">
+      <h3>اختر الترم</h3>
+      <button class="modal-btn" id="term1">الترم الأول</button>
+      <button class="modal-btn" id="term2">الترم الثاني</button>
+      <button class="modal-btn" onclick="closeModal()">إغلاق</button>
+    </div>
+  </div>
+
+  <script>
+    // ─── البيانات الكاملة للكتب ────────────────────────────────────────────────
+    const booksData = {
+      sec1: [
+        {title:"الرياضيات المتقدمة",subject:"رياضيات",file1:"math_sec1_t1.pdf",file2:"math_sec1_t2.pdf",grade:"sec1"},
+        {title:"القواعد النحوية",subject:"لغة عربية",file1:"arabic_sec1_t1.pdf",file2:"arabic_sec1_t2.pdf",grade:"sec1"},
+        {title:"Advanced English",subject:"لغة إنجليزية",file1:"english_sec1_t1.pdf",file2:"english_sec1_t2.pdf",grade:"sec1"},
+        {title:"الفيزياء",subject:"علوم",file1:"physics_sec1_t1.pdf",file2:"physics_sec1_t2.pdf",grade:"sec1"},
+        {title:"الكيمياء الأساسية",subject:"علوم",file1:"chemistry_sec1_t1.pdf",file2:"chemistry_sec1_t2.pdf",grade:"sec1"},
+        {title:"الأحياء",subject:"علوم",file1:"biology_sec1_t1.pdf",file2:"biology_sec1_t2.pdf",grade:"sec1"},
+        {title:"التاريخ الحديث",subject:"دراسات اجتماعية",file1:"history_sec1_t1.pdf",file2:"history_sec1_t2.pdf",grade:"sec1"},
+        {title:"الجغرافيا",subject:"دراسات اجتماعية",file1:"geo_sec1_t1.pdf",file2:"geo_sec1_t2.pdf",grade:"sec1"},
+        {title:"البرمجة الأساسية",subject:"حاسب آلي",file1:"programming_sec1_t1.pdf",file2:"programming_sec1_t2.pdf",grade:"sec1"},
+        {title:"التربية الفنية",subject:"فنون",file1:"art_sec1_t1.pdf",file2:"art_sec1_t2.pdf",grade:"sec1"},
+        {title:"التربية الرياضية",subject:"رياضة",file1:"pe_sec1_t1.pdf",file2:"pe_sec1_t2.pdf",grade:"sec1"},
+        {title:"اللغة الفرنسية",subject:"لغة ثانية",file1:"french_sec1_t1.pdf",file2:"french_sec1_t2.pdf",grade:"sec1"}
+      ],
+      sec2: [
+        {title:"الديناميكا",subject:"رياضيات",file1:"math_sec2_t1.pdf",file2:"math_sec2_t2.pdf",grade:"sec2"},
+        {title:"البلاغة",subject:"لغة عربية",file1:"arabic_sec2_t1.pdf",file2:"arabic_sec2_t2.pdf",grade:"sec2"},
+        {title:"English Writing",subject:"لغة إنجليزية",file1:"english_sec2_t1.pdf",file2:"english_sec2_t2.pdf",grade:"sec2"},
+        {title:"الكيمياء العضوية",subject:"علوم",file1:"chemistry_sec2_t1.pdf",file2:"chemistry_sec2_t2.pdf",grade:"sec2"},
+        {title:"الفيزياء المتقدمة",subject:"علوم",file1:"physics_sec2_t1.pdf",file2:"physics_sec2_t2.pdf",grade:"sec2"},
+        {title:"الأحياء المتقدمة",subject:"علوم",file1:"biology_sec2_t1.pdf",file2:"biology_sec2_t2.pdf",grade:"sec2"},
+        {title:"الفلسفة",subject:"دراسات اجتماعية",file1:"philosophy_sec2_t1.pdf",file2:"philosophy_sec2_t2.pdf",grade:"sec2"},
+        {title:"علم النفس",subject:"دراسات اجتماعية",file1:"psychology_sec2_t1.pdf",file2:"psychology_sec2_t2.pdf",grade:"sec2"},
+        {title:"قواعد البرمجة",subject:"حاسب آلي",file1:"coding_sec2_t1.pdf",file2:"coding_sec2_t2.pdf",grade:"sec2"},
+        {title:"التصميم الجرافيكي",subject:"فنون",file1:"graphic_design_sec2_t1.pdf",file2:"graphic_design_sec2_t2.pdf",grade:"sec2"},
+        {title:"الألعاب الرياضية",subject:"رياضة",file1:"sports_sec2_t1.pdf",file2:"sports_sec2_t2.pdf",grade:"sec2"},
+        {title:"اللغة الألمانية",subject:"لغة أجنبية",file1:"german_sec2_t1.pdf",file2:"german_sec2_t2.pdf",grade:"sec2"}
+      ]
+    };
+
+    let currentBook = null, currentTerm = null;
+
+    function showBooks(books){
+      document.getElementById('books-grid').innerHTML = books.length ? books.map(b=>`
+        <div class="book-card">
+          <div class="book-title">${b.title}</div>
+          <div class="book-subject">${b.subject} – ${getGrade(b.grade)}</div>
+          <button class="download-btn" onclick="handleDownload('${b.grade}','${b.title.replace(/'/g,"\\'")}');">
+            <i class="material-icons">download</i> تحميل الكتاب
+          </button>
+        </div>
+      `).join('') : '<div style="grid-column:1/-1;text-align:center;color:#aaa;padding:60px 20px;font-size:1.4rem;">لا توجد كتب تطابق البحث</div>';
+    }
+
+    function getGrade(g){
+      return {sec1:'الأول الثانوي',sec2:'الثاني الثانوي'}[g] || 'غير محدد';
+    }
+
+    function showSearchModal(){document.getElementById('search-modal').style.display='flex';}
+    function closeSearchModal(){document.getElementById('search-modal').style.display='none';}
+
+    function performSearch(){
+      let books = Object.values(booksData).flat();
+      const s = document.getElementById('search-subject').value;
+      const g = document.getElementById('search-grade').value;
+      const t = document.getElementById('search-term').value;
+      if(g) books = books.filter(b => b.grade === g);
+      if(s) books = books.filter(b => b.subject === s);
+      currentTerm = t || null;
+      showBooks(books);
+      document.getElementById('back-button').style.display = books.length ? 'block' : 'none';
+      closeSearchModal();
+    }
+
+    function handleDownload(grade,title){
+      currentBook = booksData[grade]?.find(b => b.title === title);
+      if(!currentBook) return;
+      currentTerm ? downloadTerm(currentTerm) : showTermModal();
+    }
+
+    function showTermModal(){document.getElementById('term-modal').style.display='flex';}
+    function closeModal(){document.getElementById('term-modal').style.display='none';currentBook=currentTerm=null;}
+
+    function downloadTerm(term){
+      if(currentBook){
+        alert(`جاري تحميل: ${currentBook.title} - الترم ${term}\nالملف: ${currentBook['file'+term]}`);
+        closeModal();
+      }
+    }
+
+    function goBack(){
+      showBooks([...booksData.sec1, ...booksData.sec2]);
+      document.getElementById('back-button').style.display='none';
+      currentTerm = null;
+    }
+
+    // ─── تهيئة الموقع ──────────────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded',()=>{
+      document.getElementById('bottom-dock').style.display='flex';
+      // عرض جميع الكتب الافتراضية (12 كارت)
+      showBooks([...booksData.sec1, ...booksData.sec2]);
+    });
+
+    document.getElementById('term1').onclick=()=>downloadTerm(1);
+    document.getElementById('term2').onclick=()=>downloadTerm(2);
+
+    window.onclick = e => {
+      if(e.target.id==='search-modal') closeSearchModal();
+      if(e.target.id==='term-modal') closeModal();
+    };
+  </script>
+</body>
+</html>
+
